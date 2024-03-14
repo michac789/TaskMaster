@@ -1,11 +1,30 @@
 from flask import request, current_app as app
 
-from .models import db, Task
+from .models import db, Task, User
 
 
 @app.route('/')
 def main():
     return {'message': 'Task Master API'}, 200
+
+
+@app.route('/users', methods=['POST'])
+def create_user():
+    data = request.json
+    errors = User.validate_input(
+        data.get('username'),
+        data.get('password'),
+    )
+    if errors:
+        return {'error': errors}, 400
+    hashed_password = User.hash_password(data['password'])
+    new_user = User(
+        username=data['username'],
+        password_hash=hashed_password
+    )
+    db.session.add(new_user)
+    db.session.commit()
+    return new_user.serialize(), 201
 
 
 @app.route('/tasks', methods=['GET'])
@@ -21,7 +40,7 @@ def create_task():
         title=data.get('title'),
         description=data.get('description', ''),
         due_date=data.get('due_date'),
-        status=data.get('status', Task.STATUS_OPTIONS[0])
+        status=data.get('status', Task.STATUS_OPTIONS[0]),
     )
     errors = new_task.validate()
     if errors:
