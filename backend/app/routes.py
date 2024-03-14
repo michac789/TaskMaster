@@ -30,7 +30,7 @@ def create_user():
     hashed_password = User.hash_password(data['password'])
     new_user = User(
         username=data['username'],
-        password_hash=hashed_password
+        password_hash=hashed_password,
     )
     db.session.add(new_user)
     db.session.commit()
