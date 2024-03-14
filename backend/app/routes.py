@@ -21,7 +21,7 @@ def create_task():
         title=data.get('title'),
         description=data.get('description', ''),
         due_date=data.get('due_date'),
-        is_completed=data.get('is_completed', False)
+        status=data.get('status', Task.STATUS_OPTIONS[0])
     )
     errors = new_task.validate()
     if errors:
@@ -48,7 +48,7 @@ def update_task(task_id):
     task.title = data.get('title', task.title)
     task.description = data.get('description', task.description)
     task.due_date = data.get('due_date', task.due_date)
-    task.is_completed = data.get('is_completed', task.is_completed)
+    task.status = data.get('status', task.status)
     db.session.commit()
     return task.serialize(), 200
 
@@ -60,4 +60,4 @@ def delete_task(task_id):
         return {'error': f'Task with id {task_id} not found!'}, 404
     db.session.delete(task)
     db.session.commit()
-    return '', 204
+    return {}, 204
