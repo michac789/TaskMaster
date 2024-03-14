@@ -13,11 +13,4 @@ db = SQLAlchemy(app)
 with app.app_context():
     db.create_all()
 
-
-@app.route('/')
-def main():
-    return 'hello world'
-
-
-if __name__ == '__main__':
-    app.run(debug=True, port=8000)
+from app import models, routes
