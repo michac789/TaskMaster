@@ -86,6 +86,7 @@ class Task(db.Model):
             'description': self.description,
             'due_date': self.due_date,
             'status': self.status,
+            'creator': self.user.username if self.user else None,
         }
         
     def validate(self):
@@ -99,9 +100,9 @@ class Task(db.Model):
         if len(self.description) > 300:
             errors.append('`description` must be at most 300 characters')
         try:
-            due_date = dt.strptime(self.due_date, '%Y-%m-%d').date()
+            due_date = dt.datetime.strptime(self.due_date, '%Y-%m-%d').date()
             self.due_date = due_date
-        except:
+        except Exception:
             errors.append('`due_date` is invalid (format required: YYYY-MM-DD)')
         if self.status not in self.STATUS_OPTIONS:
             errors.append('`status` is invalid (valid values: TO_DO, IN_PROGRESS, DONE)')
