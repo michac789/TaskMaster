@@ -64,6 +64,31 @@ def get_user(user):
 
 
 '''
+    Change the current user's password.
+    Return 401 if the user is not authenticated.
+    Return 400 if the current password is wrong or the new password is invalid.
+    Return 200 if the password is updated successfully.
+'''
+@app.route('/me', methods=['PUT'])
+@auth_required
+def change_password(user):
+    data = request.json
+    current_password = data.get('current_password', '')
+    new_password = data.get('new_password', '')
+    if not user.check_password(current_password):
+        return {'error': 'Wrong current password'}, 400
+    errors = User.validate_input(
+        user.username,
+        new_password,
+    )
+    if errors:
+        return {'error': errors}, 400
+    user.password_hash = User.hash_password(new_password)
+    db.session.commit()
+    return {'message': 'Password updated successfully'}, 200
+
+
+'''
     Get all tasks for the current user.
     Return 401 if the user is not authenticated.
     Return 200 and list of tasks created by the current user.
@@ -90,7 +115,7 @@ def create_task(user):
         description=data.get('description', ''),
         due_date=data.get('due_date'),
         status=data.get('status', Task.STATUS_OPTIONS[0]),
-        user_id=user.id
+        user_id=user.id,
     )
     errors = new_task.validate()
     if errors:
