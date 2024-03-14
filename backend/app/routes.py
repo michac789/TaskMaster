@@ -6,7 +6,7 @@ from .models import Task
 
 @app.route('/')
 def main():
-    return 'TaskMaster Backend Server'
+    return {'message': 'Task Master API'}, 200
 
 
 @app.route('/tasks', methods=['GET'])
