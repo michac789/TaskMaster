@@ -38,7 +38,7 @@ class User(db.Model):
         expiry_time = dt.datetime.now() + dt.timedelta(hours=cls.TOKEN_EXPIRY_HOURS)
         token = jwt.encode(
             {'user_id': user_id, 'exp': expiry_time},
-            'some secret key',
+            'some secret key', # TODO - put secret key in env variable
             algorithm='HS256'
         )
         return token
