@@ -69,7 +69,7 @@ class User(db.Model):
 
 
 class Task(db.Model):
-    STATUS_OPTIONS = ['TO_DO', 'IN_PROGRESS', 'DONE']
+    STATUS_OPTIONS = ['TO_DO', 'IN_PROGRESS', 'COMPLETED']
     
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(50), nullable=False)
