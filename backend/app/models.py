@@ -17,17 +17,21 @@ class User(db.Model):
             'id': self.id,
             'username': self.username,
         }
+        
+    @staticmethod
+    def validate_unique_username(username):
+        return User.query.filter_by(username=username).count() == 0
     
     @staticmethod
     def validate_input(username, password):
         errors = []
         if not username:
             errors.append('`username` is required')
-        if len(username) > 50:
+        if username and len(username) > 50:
             errors.append('`username` must be at most 50 characters')
         if not password:
             errors.append('`password` is required')
-        if len(password) < 8:
+        if password and len(password) < 8:
             errors.append('`password` must be at least 8 characters long')
         return errors
     

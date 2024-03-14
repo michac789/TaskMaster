@@ -16,6 +16,7 @@ def main():
     Create a new user, taking in a username and password.
     Store the hashed password in the database.
     Return 400 along with the validation errors if the input is invalid.
+    Return 409 if the username is not unique.
     Return 201 and the created user if the user is created successfully.
 '''
 @app.route('/users', methods=['POST'])
@@ -27,6 +28,9 @@ def create_user():
     )
     if errors:
         return {'error': errors}, 400
+    is_unique_username = User.validate_unique_username(data.get('username'))
+    if not is_unique_username:
+        return {'error': [f'username \'{data.get('username')}\' has been taken']}, 409
     hashed_password = User.hash_password(data['password'])
     new_user = User(
         username=data['username'],
@@ -65,8 +69,8 @@ def get_user(user):
 
 '''
     Change the current user's password.
-    Return 401 if the user is not authenticated.
-    Return 400 if the current password is wrong or the new password is invalid.
+    Return 401 if the user is not authenticated or the current password is wrong.
+    Return 400 if the new password is invalid.
     Return 200 if the password is updated successfully.
 '''
 @app.route('/me', methods=['PUT'])
@@ -76,7 +80,7 @@ def change_password(user):
     current_password = data.get('current_password', '')
     new_password = data.get('new_password', '')
     if not user.check_password(current_password):
-        return {'error': 'Wrong current password'}, 400
+        return {'error': 'Wrong current password'}, 401
     errors = User.validate_input(
         user.username,
         new_password,
