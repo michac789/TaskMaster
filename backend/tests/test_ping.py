@@ -1,11 +1,12 @@
 import unittest
-from app import app
+
+from tests import test_app
 
 
 class PingTestCase(unittest.TestCase):
     def setUp(self):
-        app.config['TESTING'] = True
-        self.app = app.test_client()
+        self.app = test_app
+        self.app = self.app.test_client()
     
     def test_ping(self):
         resp = self.app.get('/')

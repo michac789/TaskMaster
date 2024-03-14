@@ -1,7 +1,6 @@
-from flask import request
+from flask import request, current_app as app
 
-from app import app, db
-from .models import Task
+from .models import db, Task
 
 
 @app.route('/')
