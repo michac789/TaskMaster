@@ -27,6 +27,32 @@ def create_user():
     return new_user.serialize(), 201
 
 
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.json
+    user = User.query.filter_by(username=data.get('username', '')).first()
+    if not user or not user.check_password(data.get('password', '')):
+        return {'error': 'Invalid username or password'}, 401
+    token = User.encode_auth_token(user.id)
+    return {'token': token}, 200
+
+
+@app.route('/test', methods=['GET'])
+def protected():
+    import jwt
+    token = request.headers.get('Authorization')
+    if not token:
+        return {'error': 'Token is missing'}, 401
+    try:
+        user_id = User.decode_auth_token(token)
+        user = User.query.get(user_id)
+        return {'message': f'Welcome {user.username}'}, 200
+    except jwt.ExpiredSignatureError:
+        return {'error': 'Token has expired'}, 401
+    except jwt.InvalidTokenError:
+        return {'error': 'Invalid token'}, 401
+
+
 @app.route('/tasks', methods=['GET'])
 def get_all_tasks():
     tasks = Task.query.all()

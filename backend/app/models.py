@@ -1,10 +1,13 @@
-from datetime import datetime as dt
+import datetime as dt
+import jwt
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app import db
 
 
 class User(db.Model):
+    TOKEN_EXPIRY_HOURS = 24
+    
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     password_hash = db.Column(db.String(162), nullable=False)
@@ -29,6 +32,24 @@ class User(db.Model):
     @staticmethod
     def hash_password(password):
         return generate_password_hash(password)
+    
+    @classmethod
+    def encode_auth_token(cls, user_id):
+        expiry_time = dt.datetime.now() + dt.timedelta(hours=cls.TOKEN_EXPIRY_HOURS)
+        token = jwt.encode(
+            {'user_id': user_id, 'exp': expiry_time},
+            'some secret key',
+            algorithm='HS256'
+        )
+        return token
+    
+    @staticmethod
+    def decode_auth_token(token):
+        user = jwt.decode(token, 'some secret key', algorithms=['HS256'])
+        return user['user_id']
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
     
     def validate(self):
         errors = []
