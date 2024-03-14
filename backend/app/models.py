@@ -7,3 +7,15 @@ class Task(db.Model):
     description = db.Column(db.String(300))
     due_date = db.Column(db.Date)
     is_completed = db.Column(db.Boolean, default=False)
+    
+    def serialize(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'due_date': self.due_date,
+            'is_completed': self.is_completed
+        }
+        
+    def __repr__(self):
+        return f'<Task {self.id}: {self.title}>'
