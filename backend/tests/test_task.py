@@ -1,7 +1,7 @@
 import datetime as dt
 import unittest
 
-from app.models import Task
+from app.models import db, Task
 from tests.sample_data import SampleDataMixin
 
 
@@ -98,7 +98,7 @@ class TaskCreateTestCase(SampleDataMixin, unittest.TestCase):
         self.assertEqual(response.json['status'], 'To Do')
         self.assertEqual(response.json['title'], 'new task')
         with self.app.app_context():
-            task = Task.query.get(response.json['id'])
+            task = db.session.get(Task, response.json['id'])
             self.assertIsNotNone(task)
             self.assertEqual(task.title, 'new task')
             self.assertEqual(task.user_id, 1)
@@ -224,7 +224,6 @@ class TaskCreateTestCase(SampleDataMixin, unittest.TestCase):
             headers={'Authorization': self.token1},
         )
         self.assertEqual(response.status_code, 400)
-        print(response.json)
         self.assertEqual(response.json, {'error': ['`description` is required', '`due_date` is required', '`status` is required',]})
     
     def test_task_create_failure_10(self):
@@ -330,7 +329,7 @@ class TaskUpdateTestCase(SampleDataMixin, unittest.TestCase):
         self.assertEqual(response.json['title'], 'task1')
         self.assertEqual(response.json['status'], 'Completed')
         with self.app.app_context():
-            task = Task.query.get(1)
+            task = db.session.get(Task, 1)
             self.assertEqual(task.status, 'Completed')
             
     def test_task_update_success_2(self):
@@ -352,7 +351,7 @@ class TaskUpdateTestCase(SampleDataMixin, unittest.TestCase):
         self.assertEqual(response.json['due_date'], 'Wed, 20 Mar 2024 00:00:00 GMT')
         self.assertEqual(response.json['status'], 'To Do')
         with self.app.app_context():
-            task = Task.query.get(1)
+            task = db.session.get(Task, 1)
             self.assertEqual(task.title, 'new title')
             self.assertEqual(task.description, 'new description')
             self.assertEqual(task.due_date, dt.datetime.strptime('2024-03-20', '%Y-%m-%d').date())
@@ -443,7 +442,7 @@ class TaskDeleteTestCase(SampleDataMixin, unittest.TestCase):
         )
         self.assertEqual(response.status_code, 204)
         with self.app.app_context():
-            task = Task.query.get(1)
+            task = db.session.get(Task, 1)
             self.assertIsNone(task)
         
     def test_task_delete_failure_1(self):

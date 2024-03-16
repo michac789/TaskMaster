@@ -139,7 +139,7 @@ def create_task(user):
 @app.route('/tasks/<int:task_id>', methods=['GET'])
 @auth_required
 def get_task(user, task_id):
-    task = Task.query.get(task_id)
+    task = db.session.get(Task, task_id)
     if not task:
         return {'error': f'Task with id {task_id} not found!'}, 404
     if task.user_id != user.id:
@@ -159,7 +159,7 @@ def get_task(user, task_id):
 @app.route('/tasks/<int:task_id>', methods=['PUT'])
 @auth_required
 def update_task(user, task_id):
-    task = Task.query.get(task_id)
+    task = db.session.get(Task, task_id)
     if not task:
         return {'error': f'Task with id {task_id} not found!'}, 404
     if task.user_id != user.id:
@@ -186,7 +186,7 @@ def update_task(user, task_id):
 @app.route('/tasks/<int:task_id>', methods=['DELETE'])
 @auth_required
 def delete_task(user, task_id):
-    task = Task.query.get(task_id)
+    task = db.session.get(Task, task_id)
     if not task:
         return {'error': f'Task with id {task_id} not found!'}, 404
     if task.user_id != user.id:
