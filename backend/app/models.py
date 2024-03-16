@@ -73,13 +73,13 @@ class User(db.Model):
 
 
 class Task(db.Model):
-    STATUS_OPTIONS = ['TO_DO', 'IN_PROGRESS', 'COMPLETED']
+    STATUS_OPTIONS = ['To Do', 'In Progress', 'Completed']
     
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(300), nullable=False)
-    due_date = db.Column(db.Date)
-    status = db.Column(db.String(20), default=STATUS_OPTIONS[0])
+    due_date = db.Column(db.Date, nullable=False)
+    status = db.Column(db.String(20), default=STATUS_OPTIONS[0], nullable=False)
     
     user_id = db.Column(db.Integer,
         db.ForeignKey('user.id', name='fk_task_user', ondelete='CASCADE'))
@@ -105,11 +105,15 @@ class Task(db.Model):
             errors.append('`description` is required')
         if len(self.description) > 300:
             errors.append('`description` must be at most 300 characters')
+        if not self.due_date:
+            errors.append('`due_date` is required')
         try:
             due_date = dt.datetime.strptime(self.due_date, '%Y-%m-%d').date()
             self.due_date = due_date
         except Exception:
             errors.append('`due_date` is invalid (format required: YYYY-MM-DD)')
+        if not self.status:
+            errors.append('`status` is required')
         if self.status not in self.STATUS_OPTIONS:
             errors.append('`status` is invalid (valid values: TO_DO, IN_PROGRESS, DONE)')
         return errors
