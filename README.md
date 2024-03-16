@@ -4,7 +4,7 @@
 
 - [Project Requirements](#project-requirements)
 - [Project Overview](#project-overview)
-- [Setup Development Environment](#development-environment)
+- [Development Environment](#development-environment)
 - [Production Environment](#project-structure)
 
 ## Project Requirements
@@ -37,20 +37,20 @@ Design a SQLite database schema to store tasks.
 
 ### Validation
 
-- [ ] Implement validation on the backend side to ensure that required fields are provided when adding or updating tasks
-- [ ] Validate input formats (e.g., date format)
+- [x] Implement validation on the backend side to ensure that required fields are provided when adding or updating tasks
+- [x] Validate input formats (e.g., date format)
 - [ ] Handle error gracefully and provide appropriate error messages to the user
 
 ### Authentication (Optional)
 
-- [ ] Implement user authentication using Flask-Login or another authentication library of your choice
+- [x] Implement user authentication using Flask-Login or another authentication library of your choice
 - [ ] Allow users to sign up, log in, and log out
 - [ ] Ensure that only authenticated users can access the task management features
 
 ### Testing
 
-- [ ] Write unit tests to ensure that each endpoint and function behaves as expected
-- [ ] Test both positive and negative test cases (success and error cases)
+- [x] Write unit tests to ensure that each endpoint and function behaves as expected
+- [x] Test both positive and negative test cases (success and error cases)
 
 ### Deployment (Optional)
 
@@ -63,8 +63,74 @@ TODO
 
 ## Development Environment
 
-TODO
+### Setup Development Environment
+
+Generally, you can choose to setup your development environment using Docker or without Docker. The following is how to setup development environment using Docker, to simplify the setup process and ensure that the development environment is consistent across different machines. It is assumed that you have cloned the repository and is in the root directory of the project.
+
+1. Install Docker based on your operating system. You can find the installation instructions [here](https://docs.docker.com/get-docker/).
+
+2. Run the following command to build the Docker images and start the containers:
+
+```bash
+docker compose up
+```
+
+Note: if you have made changes to the Dockerfile, please rebuild the images by adding the `--build` flag
+
+3. The backend server should be running on localhost:8000
+
+TODO - frontend server? or just static files?
+
+### Backend Useful Commands
+
+Assuming your Docker containers are running, you can run `docker exec -ti taskmaster-backend-1 <command>` to run commands inside the backend container. Provided here are some useful commands:
+
+1. Unit Tests
+
+To run all unit tests:
+
+```bash
+docker exec -ti taskmaster-backend-1 python -m unittest tests
+```
+
+You can choose to run specific test files or test cases by specifying the test file, test class, and test name.
+
+For example, you can run `docker exec -ti taskmaster-backend-1 python -m unittest tests.test_task.TaskCreateTestCase.test_task_create_success` to run only the `test_task_create_success` test case in the `TaskCreateTestCase` class in the `test_task` file.
+
+2. Database Migrations
+
+Creating a migration:
+
+```bash
+docker exec -ti taskmaster-backend-1 flask db migrate -m "migration message"
+```
+
+Applying the migration:
+
+```bash
+docker exec -ti taskmaster-backend-1 flask db upgrade
+```
+
+Refer to [Flask-Migrate](https://flask-migrate.readthedocs.io/en/latest/) for further information.
 
 ## Production Environment
+
+### Environment Variables
+
+TODO
+
+### WSGI Server
+
+TODO
+
+### Production Database
+
+TODO
+
+### Deployment
+
+TODO
+
+### CI/CD Pipeline
 
 TODO
