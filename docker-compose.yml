@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8510:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=your_secret_key
+      - ALLOWED_HOSTS=localhost:3000
