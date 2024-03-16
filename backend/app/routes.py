@@ -31,9 +31,10 @@ def create_user():
     )
     if errors:
         return {'error': errors}, 400
-    is_unique_username = User.validate_unique_username(data.get('username'))
+    username = data.get('username')
+    is_unique_username = User.validate_unique_username(username)
     if not is_unique_username:
-        return {'error': [f'username \'{data.get('username')}\' has been taken']}, 409
+        return {'error': [f'username \'{username}\' has been taken']}, 409
     hashed_password = User.hash_password(data['password'])
     new_user = User(
         username=data['username'],
