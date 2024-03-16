@@ -1,5 +1,4 @@
 from flask import request, current_app as app
-import os
 
 from app.models import db, Task, User
 from app.utils import auth_required
@@ -10,8 +9,10 @@ from app.utils import auth_required
 '''
 @app.route('/')
 def main():
-    x = os.environ.get('SETENVVARLATER', 'empty') # TODO - env var setup
-    return {'message': f'Task Master API23s {x}'}, 400
+    return {
+        'message': 'Task Master API',
+        'note': 'In a real production environment, the `ALLOWED_HOSTS` env var should be set to the appropriate IP address. I am exposing it here for the sake of this being a sample project, and to allow for easy testing and demonstration.',
+    }, 400
 
 
 '''

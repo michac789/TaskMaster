@@ -6,10 +6,13 @@ services:
       context: ./backend
       dockerfile: Dockerfile.dev
     ports:
-      - "8510:8000"
+      - "8000:8000"
     volumes:
       - ./backend:/app
     environment:
       - DEBUG=1
-      - SECRET_KEY=your_secret_key
-      - ALLOWED_HOSTS=localhost:3000
+      - PORT=8000
+      - ALLOWED_HOSTS=0.0.0.0
+      - SECRET_KEY=insecure_key_just_for_development
+      - PROD=0
+      - DATABASE_URI=this_env_var_is_used_only_in_production
