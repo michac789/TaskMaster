@@ -99,22 +99,23 @@ class Task(db.Model):
         errors = []
         if not self.title:
             errors.append('`title` is required')
-        if len(self.title) > 50:
+        if self.title and len(self.title) > 50:
             errors.append('`title` must be at most 50 characters')
         if not self.description:
             errors.append('`description` is required')
-        if len(self.description) > 300:
+        if self.description and len(self.description) > 300:
             errors.append('`description` must be at most 300 characters')
         if not self.due_date:
             errors.append('`due_date` is required')
-        try:
-            due_date = dt.datetime.strptime(self.due_date, '%Y-%m-%d').date()
-            self.due_date = due_date
-        except Exception:
-            errors.append('`due_date` is invalid (format required: YYYY-MM-DD)')
+        if self.due_date:
+            try:
+                due_date = dt.datetime.strptime(self.due_date, '%Y-%m-%d').date()
+                self.due_date = due_date
+            except Exception:
+                errors.append('`due_date` is invalid (format required: YYYY-MM-DD)')
         if not self.status:
             errors.append('`status` is required')
-        if self.status not in self.STATUS_OPTIONS:
+        if self.status and self.status not in self.STATUS_OPTIONS:
             errors.append('`status` is invalid (valid values: TO_DO, IN_PROGRESS, DONE)')
         return errors
         
