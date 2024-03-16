@@ -7,12 +7,12 @@ from app.utils import auth_required
 '''
     Root endpoint, simply to ping the server.
 '''
-@app.route('/')
+@app.route('/', methods=['GET'])
 def main():
     return {
         'message': 'Task Master API',
         'note': 'In a real production environment, the `ALLOWED_HOSTS` env var should be set to the appropriate IP address. I am exposing it here for the sake of this being a sample project, and to allow for easy testing and demonstration.',
-    }, 400
+    }, 200
 
 
 '''

@@ -6,7 +6,7 @@ ENV ALLOWED_HOST=0.0.0.0
 ENV SECRET_KEY=temporary_secret_key_for_testing
 # ENV PROD=1
 # ENV DATABASE_URI=sqlite:///db.sqlite3 (maybe use postgresql?)
-# ^setup later after creating prod db
+# TODO ^setup later after creating prod db in the cloud
 
 WORKDIR /app
 COPY requirements-prod.txt requirements-prod.txt
