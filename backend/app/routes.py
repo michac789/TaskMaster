@@ -116,9 +116,9 @@ def create_task(user):
     data = request.json
     new_task = Task(
         title=data.get('title'),
-        description=data.get('description', ''),
+        description=data.get('description'),
         due_date=data.get('due_date'),
-        status=data.get('status', Task.STATUS_OPTIONS[0]),
+        status=data.get('status'),
         user_id=user.id,
     )
     errors = new_task.validate()
@@ -126,7 +126,6 @@ def create_task(user):
         return {'error': errors}, 400
     db.session.add(new_task)
     db.session.commit()
-    # TODO - make all the fields compulsory
     return new_task.serialize(), 201
 
 
@@ -154,6 +153,7 @@ def get_task(user, task_id):
     Return 401 if the user is not authenticated.
     Return 404 if the task id is invalid.
     Return 403 if the task does not belong to the current user.
+    Return 400 along with the validation errors if the input is invalid.
     Return 200 and the updated task if the task is updated successfully.
 '''
 @app.route('/tasks/<int:task_id>', methods=['PUT'])
@@ -167,10 +167,12 @@ def update_task(user, task_id):
     data = request.json
     task.title = data.get('title', task.title)
     task.description = data.get('description', task.description)
-    task.due_date = data.get('due_date', task.due_date)
+    task.due_date = data.get('due_date', task.due_date.strftime('%Y-%m-%d'))
     task.status = data.get('status', task.status)
+    errors = task.validate()
+    if errors:
+        return {'error': errors}, 400
     db.session.commit()
-    # TODO - add validation for task
     return task.serialize(), 200
 
 
