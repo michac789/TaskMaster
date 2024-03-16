@@ -1,6 +1,7 @@
+import datetime as dt
 import unittest
 
-from app.models import Task, User
+from app.models import Task
 from tests.sample_data import SampleDataMixin
 
 
@@ -29,7 +30,7 @@ class TaskGetAllTestCase(SampleDataMixin, unittest.TestCase):
             'id': 1,
             'title': 'task1',
             'description': 'task1 description',
-            'status': 'IN_PROGRESS',
+            'status': 'In Progress',
             'creator': 'user1',
             'due_date': 'Fri, 15 Mar 2024 00:00:00 GMT',
         })
@@ -80,6 +81,7 @@ class TaskCreateTestCase(SampleDataMixin, unittest.TestCase):
                 'description': 'new task description',
                 'status': 'To Do',
                 'due_date': '2024-03-15',
+                'extra': 'extra field', # extra field should be ignored
             },
             headers={'Authorization': self.token1},
         )
@@ -98,9 +100,148 @@ class TaskCreateTestCase(SampleDataMixin, unittest.TestCase):
         with self.app.app_context():
             task = Task.query.get(response.json['id'])
             self.assertIsNotNone(task)
+            self.assertEqual(task.title, 'new task')
+            self.assertEqual(task.user_id, 1)
         
     def test_task_create_failure_1(self):
-        pass # TODO - add more test cases!
+        # missing json data
+        response = self.client.post(
+            '/tasks',
+            headers={'Authorization': self.token1},
+        )
+        self.assertEqual(response.status_code, 415)
+    
+    def test_task_create_failure_2(self):
+        # unauthenticated
+        response = self.client.post(
+            '/tasks',
+            json={
+                'title': 'new task',
+                'description': 'new task description',
+                'status': 'To Do',
+                'due_date': '2024-03-15',
+            },
+        )
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.json, {'error': 'Token is missing'})
+    
+    def test_task_create_failure_3(self):
+        # invalid token
+        response = self.client.post(
+            '/tasks',
+            json={
+                'title': 'new task',
+                'description': 'new task description',
+                'status': 'To Do',
+                'due_date': '2024-03-15',
+            },
+            headers={'Authorization': 'invalid token'},
+        )
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.json, {'error': 'Invalid token'})
+    
+    def test_task_create_failure_4(self):
+        # missing title and status
+        response = self.client.post(
+            '/tasks',
+            json={
+                'description': 'new task description',
+                'due_date': '2024-03-15',
+            },
+            headers={'Authorization': self.token1},
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {'error': ['`title` is required', '`status` is required']})
+        
+    def test_task_create_failure_5(self):
+        # missing due date
+        response = self.client.post(
+            '/tasks',
+            json={
+                'title': 'new task',
+                'description': 'new task description',
+                'status': 'To Do',
+            },
+            headers={'Authorization': self.token1},
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {'error': ['`due_date` is required']})
+    
+    def test_task_create_failure_6(self):
+        # missing description and invalid status
+        response = self.client.post(
+            '/tasks',
+            json={
+                'title': 'new task',
+                'status': 'INVALID',
+                'due_date': '2024-03-15',
+            },
+            headers={'Authorization': self.token1},
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {'error': ['`description` is required', '`status` is invalid (valid values: TO_DO, IN_PROGRESS, DONE)']})
+        
+    def test_task_create_failure_7(self):
+        # invalid due date format
+        response = self.client.post(
+            '/tasks',
+            json={
+                'title': 'new task',
+                'description': 'new task description',
+                'status': 'To Do',
+                'due_date': '03-15-2024',
+            },
+            headers={'Authorization': self.token1},
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {'error': ['`due_date` is invalid (format required: YYYY-MM-DD)']})
+
+    def test_task_create_failure_8(self):
+        # title and description too long
+        response = self.client.post(
+            '/tasks',
+            json={
+                'title': 'a'*51,
+                'description': 'a'*301,
+                'status': 'To Do',
+                'due_date': '2024-03-15',
+            },
+            headers={'Authorization': self.token1},
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {'error': ['`title` must be at most 50 characters', '`description` must be at most 300 characters']})
+        
+    def test_task_create_failure_9(self):
+        # some null values
+        response = self.client.post(
+            '/tasks',
+            json={
+                'title': 'some title',
+                'description': None,
+                'status': None,
+                'due_date': None,
+            },
+            headers={'Authorization': self.token1},
+        )
+        self.assertEqual(response.status_code, 400)
+        print(response.json)
+        self.assertEqual(response.json, {'error': ['`description` is required', '`due_date` is required', '`status` is required',]})
+    
+    def test_task_create_failure_10(self):
+        # invalid due date format, empty title and description
+        response = self.client.post(
+            '/tasks',
+            json={
+                'title': '',
+                'description': '',
+                'status': 'Completed',
+                'due_date': '03-15-2024',
+            },
+            headers={'Authorization': self.token1},
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {'error': ['`title` is required', '`description` is required', '`due_date` is invalid (format required: YYYY-MM-DD)']})
+
 
 class TaskGetTestCase(SampleDataMixin, unittest.TestCase):
     def setUp(self):
@@ -172,13 +313,13 @@ class TaskUpdateTestCase(SampleDataMixin, unittest.TestCase):
         )
         self.token2 = response2.json['token']
         
-    def test_task_update_success(self):
+    def test_task_update_success_1(self):
+        # update single field
         response = self.client.put(
             '/tasks/1',
             json={'status': 'Completed'},
             headers={'Authorization': self.token1},
         )
-        print(response.json)
         self.assertEqual(response.status_code, 200)
         self.assertIn('creator', response.json)
         self.assertIn('description', response.json)
@@ -191,6 +332,31 @@ class TaskUpdateTestCase(SampleDataMixin, unittest.TestCase):
         with self.app.app_context():
             task = Task.query.get(1)
             self.assertEqual(task.status, 'Completed')
+            
+    def test_task_update_success_2(self):
+        # update multiple fields
+        response = self.client.put(
+            '/tasks/1',
+            json={
+                'title': 'new title',
+                'description': 'new description',
+                'due_date': '2024-03-20',
+                'status': 'To Do',
+            },
+            headers={'Authorization': self.token1},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('creator', response.json)
+        self.assertEqual(response.json['title'], 'new title')
+        self.assertEqual(response.json['description'], 'new description')
+        self.assertEqual(response.json['due_date'], 'Wed, 20 Mar 2024 00:00:00 GMT')
+        self.assertEqual(response.json['status'], 'To Do')
+        with self.app.app_context():
+            task = Task.query.get(1)
+            self.assertEqual(task.title, 'new title')
+            self.assertEqual(task.description, 'new description')
+            self.assertEqual(task.due_date, dt.datetime.strptime('2024-03-20', '%Y-%m-%d').date())
+            self.assertEqual(task.status, 'To Do')
         
     def test_task_update_failure_1(self):
         # unauthenticated
@@ -223,16 +389,38 @@ class TaskUpdateTestCase(SampleDataMixin, unittest.TestCase):
         
     def test_task_update_failure_4(self):
         # invalid status
-        pass # TODO - there is a bug!
-        # response = self.client.put(
-        #     '/tasks/1',
-        #     json={'status': 'INVALID'},
-        #     headers={'Authorization': self.token1},
-        # )
-        # self.assertEqual(response.status_code, 400)
-        # self.assertEqual(response.json, {'error': '`status` is invalid (valid values: TO_DO, IN_PROGRESS, DONE)'})
+        response = self.client.put(
+            '/tasks/1',
+            json={'status': 'INVALID'},
+            headers={'Authorization': self.token1},
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {'error': ['`status` is invalid (valid values: TO_DO, IN_PROGRESS, DONE)']})
 
-    # TODO - add more validations!
+    def test_task_update_failure_5(self):
+        # invalid due date format
+        response = self.client.put(
+            '/tasks/1',
+            json={'due_date': 'invalidformat'},
+            headers={'Authorization': self.token1},
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {'error': ['`due_date` is invalid (format required: YYYY-MM-DD)']})
+        
+    def test_task_update_failure_6(self):
+        # title too long, description ok, invalid status, due date ok
+        response = self.client.put(
+            '/tasks/1',
+            json={
+                'title': 'a'*51,
+                'description': 'new description',
+                'status': 'INVALID',
+                'due_date': '2024-03-20',
+            },
+            headers={'Authorization': self.token1},
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {'error': ['`title` must be at most 50 characters', '`status` is invalid (valid values: TO_DO, IN_PROGRESS, DONE)']})
 
 class TaskDeleteTestCase(SampleDataMixin, unittest.TestCase):
     def setUp(self):
