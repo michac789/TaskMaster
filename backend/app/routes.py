@@ -1,4 +1,5 @@
 from flask import request, current_app as app
+import os
 
 from app.models import db, Task, User
 from app.utils import auth_required
@@ -9,7 +10,8 @@ from app.utils import auth_required
 '''
 @app.route('/')
 def main():
-    return {'message': 'Task Master API'}, 200
+    x = os.environ.get('SETENVVARLATER', 'empty') # TODO - env var setup
+    return {'message': f'Task Master API23s {x}'}, 400
 
 
 '''
