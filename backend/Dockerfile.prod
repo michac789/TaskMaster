@@ -1,0 +1,19 @@
+FROM python:3.12.2-alpine3.19
+
+ENV DEBUG=0
+ENV PORT=8510
+ENV ALLOWED_HOST=0.0.0.0
+ENV SECRET_KEY=temporary_secret_key_for_testing
+# ENV PROD=1
+# ENV DATABASE_URI=sqlite:///db.sqlite3 (maybe use postgresql?)
+# ^setup later after creating prod db
+
+WORKDIR /app
+COPY requirements-prod.txt requirements-prod.txt
+RUN pip install -r requirements-prod.txt
+COPY . .
+EXPOSE 8510
+CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:8510", "runner:app"]
+# TODO - careful! might need to create db tables and migrate first for the first time
+# can do manually by docker exec -it <container_id> ...
+# but try to automate this process later

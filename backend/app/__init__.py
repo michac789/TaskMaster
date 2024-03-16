@@ -18,7 +18,10 @@ def create_app(type='dev'):
         app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{SQLITE3_TEST_DB_PATH}'
         app.config['TESTING'] = True
     elif type == 'prod':
-        app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')
+        try:
+            app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')
+        except:
+            raise ValueError('DATABASE_URI environment variable is not set or has parsing issues!')
     else:
         raise ValueError('Invalid app type given! The `create_app` function only accepts `dev` or `test` or `prod` as arguments.')
     db.init_app(app)

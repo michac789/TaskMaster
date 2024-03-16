@@ -10,7 +10,7 @@ services:
     volumes:
       - ./backend:/app
     environment:
-      - DEBUG=1
+      - DEBUG=0
       - PORT=8000
       - ALLOWED_HOSTS=0.0.0.0
       - SECRET_KEY=insecure_key_just_for_development
