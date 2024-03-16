@@ -1,9 +1,12 @@
 import datetime as dt
 import jwt
+import os
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app import db
 
+
+JWT_HMAC_SECRET_KEY = os.environ.get('SECRET_KEY', 'insecure_secret_key')
 
 class User(db.Model):
     TOKEN_EXPIRY_HOURS = 24
@@ -44,14 +47,14 @@ class User(db.Model):
         expiry_time = dt.datetime.now() + dt.timedelta(hours=cls.TOKEN_EXPIRY_HOURS)
         token = jwt.encode(
             {'user_id': user_id, 'exp': expiry_time},
-            'some secret key', # TODO - put secret key in env variable
+            JWT_HMAC_SECRET_KEY,
             algorithm='HS256'
         )
         return token
     
     @staticmethod
     def decode_auth_token(token):
-        user = jwt.decode(token, 'some secret key', algorithms=['HS256'])
+        user = jwt.decode(token, JWT_HMAC_SECRET_KEY, algorithms=['HS256'])
         return user['user_id']
 
     def check_password(self, password):
