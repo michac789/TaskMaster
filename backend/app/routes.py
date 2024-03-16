@@ -126,6 +126,7 @@ def create_task(user):
         return {'error': errors}, 400
     db.session.add(new_task)
     db.session.commit()
+    # TODO - make all the fields compulsory
     return new_task.serialize(), 201
 
 
@@ -143,7 +144,7 @@ def get_task(user, task_id):
     if not task:
         return {'error': f'Task with id {task_id} not found!'}, 404
     if task.user_id != user.id:
-        return {'error': 'Unauthorized'}, 403
+        return {'error': 'Forbidden'}, 403
     return task.serialize(), 200
 
 
@@ -158,17 +159,18 @@ def get_task(user, task_id):
 @app.route('/tasks/<int:task_id>', methods=['PUT'])
 @auth_required
 def update_task(user, task_id):
-    task = Task.query.filter(user_id=user.id, id=task_id).first()
+    task = Task.query.get(task_id)
     if not task:
         return {'error': f'Task with id {task_id} not found!'}, 404
     if task.user_id != user.id:
-        return {'error': 'Unauthorized'}, 403
+        return {'error': 'Forbidden'}, 403
     data = request.json
     task.title = data.get('title', task.title)
     task.description = data.get('description', task.description)
     task.due_date = data.get('due_date', task.due_date)
     task.status = data.get('status', task.status)
     db.session.commit()
+    # TODO - add validation for task
     return task.serialize(), 200
 
 
@@ -186,7 +188,7 @@ def delete_task(user, task_id):
     if not task:
         return {'error': f'Task with id {task_id} not found!'}, 404
     if task.user_id != user.id:
-        return {'error': 'Unauthorized'}, 403
+        return {'error': 'Forbidden'}, 403
     db.session.delete(task)
     db.session.commit()
     return {}, 204

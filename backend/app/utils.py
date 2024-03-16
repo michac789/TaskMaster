@@ -2,7 +2,7 @@ from flask import request
 from functools import wraps
 import jwt
 
-from .models import User
+from app.models import db, User
 
 
 '''
@@ -17,7 +17,7 @@ def auth_required(func):
             return {'error': 'Token is missing'}, 401
         try:
             user_id = User.decode_auth_token(token)
-            user = User.query.get(user_id)
+            user = db.session.get(User, user_id)
             kwargs['user'] = user
             return func(*args, **kwargs)
         except jwt.ExpiredSignatureError:
