@@ -179,7 +179,7 @@ class TaskCreateTestCase(SampleDataMixin, unittest.TestCase):
             headers={'Authorization': self.token1},
         )
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json, {'error': ['`description` is required', '`status` is invalid (valid values: TO_DO, IN_PROGRESS, DONE)']})
+        self.assertEqual(response.json, {'error': ['`description` is required', '`status` is invalid (valid values: To Do, In Progress, Completed)']})
         
     def test_task_create_failure_7(self):
         # invalid due date format
@@ -394,7 +394,7 @@ class TaskUpdateTestCase(SampleDataMixin, unittest.TestCase):
             headers={'Authorization': self.token1},
         )
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json, {'error': ['`status` is invalid (valid values: TO_DO, IN_PROGRESS, DONE)']})
+        self.assertEqual(response.json, {'error': ['`status` is invalid (valid values: To Do, In Progress, Completed)']})
 
     def test_task_update_failure_5(self):
         # invalid due date format
@@ -419,7 +419,7 @@ class TaskUpdateTestCase(SampleDataMixin, unittest.TestCase):
             headers={'Authorization': self.token1},
         )
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json, {'error': ['`title` must be at most 50 characters', '`status` is invalid (valid values: TO_DO, IN_PROGRESS, DONE)']})
+        self.assertEqual(response.json, {'error': ['`title` must be at most 50 characters', '`status` is invalid (valid values: To Do, In Progress, Completed)']})
 
 class TaskDeleteTestCase(SampleDataMixin, unittest.TestCase):
     def setUp(self):
