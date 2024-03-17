@@ -41,19 +41,14 @@ jobs:
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          DEBUG: ${{ secrets.ENV_DEBUG }}
-          PORT: ${{ secrets.ENV_PORT }}
           ALLOWED_HOSTS: ${{ secrets.ENV_ALLOWED_HOSTS }}
           SECRET_KEY: ${{ secrets.ENV_SECRET_KEY }}
-          PROD: ${{ secrets.ENV_PROD }}
           DATABASE_URI: ${{ secrets.ENV_DATABASE_URI }}
+          TEST_VAR: ${{ secrets.ENV_TEST_VAR }}
         run: |
           docker build -t michac789/taskmaster_backend_prod:latest -f Dockerfile.prod \
-            --build-arg DEBUG="$DEBUG" \
-            --build-arg PORT="$PORT" \
             --build-arg ALLOWED_HOSTS="$ALLOWED_HOSTS" \
             --build-arg SECRET_KEY="$SECRET_KEY" \
-            --build-arg PROD="$PROD" \
             --build-arg DATABASE_URI="$DATABASE_URI" \
             .
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD

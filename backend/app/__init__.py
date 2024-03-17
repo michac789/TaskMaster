@@ -2,6 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.exc import OperationalError
 import os
 
 
@@ -30,5 +31,8 @@ def create_app(type='dev'):
     Migrate(app, db)
     with app.app_context():
         from . import routes
-        db.create_all()
+        try:
+            db.create_all()
+        except OperationalError:
+            pass # table already exists
     return app

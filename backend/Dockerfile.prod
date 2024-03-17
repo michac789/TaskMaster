@@ -1,4 +1,16 @@
 FROM python:3.12.2-slim-bullseye
+
+ARG ALLOWED_HOSTS
+ARG SECRET_KEY
+ARG DATABASE_URI
+ENV ALLOWED_HOSTS=$ALLOWED_HOSTS
+ENV SECRET_KEY=$SECRET_KEY
+ENV DATABASE_URI=$DATABASE_URI
+
+ENV DEBUG=0
+ENV PORT=8000
+ENV PROD=1
+
 RUN apt-get update && apt-get -y install libpq-dev gcc
 WORKDIR /app
 COPY requirements-prod.txt requirements-prod.txt
