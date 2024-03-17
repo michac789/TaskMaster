@@ -39,7 +39,7 @@
         ABOUT
       </div>
     </div>
-    <div class="navbar-profile">
+    <div class="navbar-profile" onclick="handleProfileClick()">
       <div class="navbar-username typography-subtitle navbar-user-anonymous"
           id="navbar-username">
         Not Logged In
@@ -49,7 +49,6 @@
   </div>
 
   <div class="layout-main-container">
-
     <div id="page-tasks">
       <div class="layout-taskcards-container" id="taskcards-container">
         <button class="typography-button button-fill-primary button-lg" id="add-task-button"
@@ -155,7 +154,7 @@
     </div>
   </div>
 
-  <div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal-backdrop" id="modal-delete">
     <div class="modal-container" id="modal-container">
       <div class="modal-title typography-title2">
         Delete Confirmation
@@ -171,12 +170,62 @@
         </div>
       </div>
       <div class="modal-actions">
-        <button class="typography-button button-outline-neutral"
+        <button class="typography-button button-sm button-outline-neutral"
             onclick="cancelDeleteTask()">
           Cancel
         </button>
-        <button class="typography-button button-fill-danger" id="delete-task-button">
+        <button class="typography-button button-sm button-fill-danger" id="delete-task-button">
           Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modal-profile">
+    <div class="modal-container" id="modal-container">
+      <div class="modal-title typography-title2">
+        User Profile
+      </div>
+      <div class="modal-body typography-body">
+        <div>
+          <span class="typography-body">
+            User Id:
+          </span>
+          <span class="typography-subtitle text-gray" id="modal-profile-id">
+            Not Logged In
+          </span>
+        </div>
+        <div>
+          <span class="typography-body">
+            Username:
+          </span>
+          <span class="typography-subtitle text-gray" id="modal-profile-username">
+            Not Logged In
+          </span>
+        </div>
+        <button class="typography-button button-fw button-outline-warning"
+            onclick="" id="profile-button-change-password">
+          Change Password
+        </button>
+        <section id="change-password-section">
+        </section>
+      </div>
+      <div class="modal-actions">
+        <button class="typography-button button-sm button-outline-neutral"
+            onclick="closeProfileModal()">
+          Exit
+        </button>
+        <button class="typography-button button-sm button-fill-secondary"
+            id="profile-button-register" onclick="handleRegisterRedirect()">
+          Register
+        </button>
+        <button class="typography-button button-sm button-fill-primary"
+            id="profile-button-login" onclick="handleLoginRedirect()">
+          Login
+        </button>
+        <button class="typography-button button-sm button-fill-warning"
+            id="profile-button-logout" onclick="handleLogout()">
+          Logout
         </button>
       </div>
     </div>

@@ -9,6 +9,26 @@
     background-color: #3272d2;
 }
 
+.button-fill-secondary {
+    color: #fafcfd;
+    background-color: #4d4d4d;
+    border: none;
+    cursor: pointer;
+}
+.button-fill-secondary:hover {
+    background-color: #6b6b6b;
+}
+
+.button-fill-warning {
+    color: #fafcfd;
+    background-color: #ff860d;
+    border: none;
+    cursor: pointer;
+}
+.button-fill-warning:hover {
+    background-color: #f5a03e;
+}
+
 .button-fill-danger {
     color: #fafcfd;
     background-color: #db4634;
@@ -19,6 +39,16 @@
     background-color: #bf3f30;
 }
 
+.button-outline-primary {
+    color: #0096ff;
+    background-color: #fafcfd;
+    border: 1px solid #0096ff;
+    cursor: pointer;
+}
+.button-outline-primary:hover {
+    background-color: #e0f0ff;
+}
+
 .button-outline-neutral {
     color: #4d4d4d;
     background-color: #fafcfd;
@@ -27,6 +57,16 @@
 }
 .button-outline-neutral:hover {
     background-color: #eef1f0;
+}
+
+.button-outline-warning {
+    color: #ff860d;
+    background-color: #fafcfd;
+    border: 1px solid #ff860d;
+    cursor: pointer;
+}
+.button-outline-warning:hover {
+    background-color: #faecc0;
 }
 
 .button-outline-danger {
@@ -43,6 +83,11 @@
     border-radius: 4px;
     padding: 4px 12px;
     width: 80px;
+}
+.button-fw {
+    border-radius: 4px;
+    padding: 4px 12px;
+    width: 100%;
 }
 .button-lg {
     border-radius: 4px;
