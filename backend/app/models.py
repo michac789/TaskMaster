@@ -119,7 +119,7 @@ class Task(db.Model):
         if not self.status:
             errors.append('`status` is required')
         if self.status and self.status not in self.STATUS_OPTIONS:
-            errors.append('`status` is invalid (valid values: TO_DO, IN_PROGRESS, DONE)')
+            errors.append('`status` is invalid (valid values: To Do, In Progress, Completed)')
         return errors
         
     def __repr__(self):
