@@ -33,14 +33,60 @@ const handlePageChange = (pageName) => {
       break;
     case 'login':
       loginPage.style.display = 'block';
+      resetLoginPage();
       break;
     case 'register':
       registerPage.style.display = 'block';
+      resetRegisterPage();
       break;
     case 'about':
       aboutPage.style.display = 'block';
       break;
   }
+}
+
+const resetLoginPage = () => {
+  // auto-focus on the username input field
+  const usernameInput = document.getElementById('login-username');
+  usernameInput.focus();
+
+  // clear the error message
+  const loginError = document.getElementById('login-error');
+  loginError.innerText = '';
+
+  // handle enter key press to login
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      const registerLink = document.getElementById('register-link');
+      if (document.activeElement === registerLink) {
+        handlePageChange('register');
+      } else {
+        handleLogin();
+      }
+    }
+  });
+}
+
+const resetRegisterPage = () => {
+  // auto-focus on the username input field
+  const usernameInput = document.getElementById('register-username');
+  usernameInput.focus();
+
+  // clear the error message
+  const registerError = document.getElementById('register-error');
+  registerError.innerText = '';
+
+  // handle enter key press to register
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      const loginLink = document.getElementById('login-link');
+      if (document.activeElement === loginLink) {
+        handlePageChange('login');
+      } else {
+        handleRegister();
+      }
+    }
+  });
 }
 
 const resetTaskPage = () => {
