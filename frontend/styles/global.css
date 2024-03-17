@@ -1,6 +1,7 @@
 
 body {
     background-color: #fafcfd;
+    margin: 0;
 }
 ::-webkit-scrollbar {
     width: 8px;
