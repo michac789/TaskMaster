@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="styles/color.css">
   <link rel="stylesheet" href="styles/global.css">
   <link rel="stylesheet" href="styles/layout.css">
+  <link rel="stylesheet" href="styles/modal.css">
   <link rel="stylesheet" href="styles/taskcard.css">
   <link rel="stylesheet" href="styles.css">
 
@@ -36,21 +37,38 @@
   </div>
 
   <div class="layout-main-container">
-    <div style="margin: 16px;">
-      <h1>Typography Samples</h1>
-      <p class="typography-title1">(title1) The red fox jumps over the lazy dog</p>
-      <p class="typography-title2">(title2) The red fox jumps over the lazy dog</p>
-      <p class="typography-subtitle">(subtitle) The red fox jumps over the lazy dog</p>
-      <p class="typography-body">(body) The red fox jumps over the lazy dog</p>
-      <p class="typography-button">(button) The red fox jumps over the lazy dog</p>
-      <p class="typography-overline">(overline) The red fox jumps over the lazy dog</p>
-    </div>
-  
     <div class="layout-taskcards-container" id="taskcards-container">
       <button class="typography-button button-primary" id="add-task-button"
           onclick="addTaskCard()">
         Add Task
       </button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modal-backdrop">
+    <div class="modal-container" id="modal-container">
+      <div class="modal-title typography-title2">
+        Delete Confirmation
+      </div>
+      <div class="modal-body typography-body">
+        <span>
+          Are you sure you want to delete this task with title
+          <span id="delete-task-title"></span>
+          from your tasks list?
+        </span>
+        <div class="typography-overline">
+          Warning: This action cannot be undone!
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="typography-button button-secondary"
+            onclick="cancelDeleteTask()">
+          Cancel
+        </button>
+        <button class="typography-button button-primary" id="delete-task-button">
+          Delete
+        </button>
+      </div>
     </div>
   </div>
 </body>

@@ -2,7 +2,7 @@ const ROOT_ENDPOINT = 'https://backend.taskmaster.michac789.com';
 // TODO - remove this token later, create real authentication
 const temp_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE3MTA3NDg2MDN9.3ohsdxrWx_mZ_q-UErEcs6R6iR2sPgH3IU8iyCZzzW0';
 
-const ALL_TASKS_ENDPOINT = `${ROOT_ENDPOINT}/tasks`;
+const TASKS_ENDPOINT = `${ROOT_ENDPOINT}/tasks`;
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log('DOM loaded with JavaScript!')
@@ -11,12 +11,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /**
  * Utility function to create a task card
- * @param {Object} task - task object with title, description, due_date, status
+ * @param {Object} task - task object with id, title, description, due_date, status
  * @returns {HTMLElement} - the task card div element
  */
 const createTaskCard = (task) => {
   const taskcardContainer = document.createElement('div');
   taskcardContainer.classList.add('taskcard-container');
+  taskcardContainer.id = `taskcard-${task.id}`;
   taskcardContainer.innerHTML = `
     <div class="taskcard-header">
       <div class="typography-title2">
@@ -36,7 +37,8 @@ const createTaskCard = (task) => {
       ${task.description}
     </div>
     <div class="taskcard-actions">
-      <button class="typography-button button-secondary button-width-small">
+      <button class="typography-button button-secondary button-width-small"
+          onclick="confirmDeleteTask(${task.id}, '${task.title}')">
         Delete
       </button>
       <button class="typography-button button-primary button-width-small">
@@ -50,7 +52,7 @@ const createTaskCard = (task) => {
 const getTasks = async () => {
   try {
     // fetch all tasks
-    const response = await fetch(ALL_TASKS_ENDPOINT, {
+    const response = await fetch(TASKS_ENDPOINT, {
       method: 'GET',
       headers: {
         'Authorization': temp_token
@@ -131,8 +133,8 @@ const createTask = async () => {
   const data = { title, description, due_date, status };
 
   try {
-    // post request to create a new task
-    await fetch(ALL_TASKS_ENDPOINT, {
+    // call api to create a new task with the given data
+    response = await fetch(TASKS_ENDPOINT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -140,6 +142,8 @@ const createTask = async () => {
       },
       body: JSON.stringify(data)
     });
+    const responseData = await response.json();
+    data['id'] = responseData['id'];
 
     // append the new task card to the task cards container
     const taskcardsContainer = document.getElementById('taskcards-container');
@@ -153,5 +157,48 @@ const createTask = async () => {
   }
   catch (error) {
     console.error('Error creating task:', error); // TODO - handle error
+  }
+}
+
+const confirmDeleteTask = (id, title) => {
+  // open delete confirmation modal
+  const modalBackdrop = document.getElementById('modal-backdrop') 
+  modalBackdrop.style.visibility = 'visible';
+
+  // render task title in the modal
+  const deleteTitleSpan = document.getElementById('delete-task-title');
+  deleteTitleSpan.innerText = title;
+
+  // set the delete button to delete the task with the given id
+  const deleteButton = document.getElementById('delete-task-button');
+  deleteButton.onclick = () => deleteTask(id);
+}
+
+const cancelDeleteTask = () => {
+  // close delete confirmation modal
+  const modalBackdrop = document.getElementById('modal-backdrop') 
+  modalBackdrop.style.visibility = 'hidden';
+}
+
+const deleteTask = async (id) => {
+  console.log('Deleting task with id:', id);
+  try {
+    // call api to delete task with the given id
+    await fetch(`${TASKS_ENDPOINT}/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': temp_token
+      }
+    });
+
+    // remove the task card from the task cards container
+    const taskcardContainer = document.getElementById(`taskcard-${id}`);
+    taskcardContainer.remove();
+
+    // close delete confirmation modal
+    cancelDeleteTask();
+  }
+  catch (error) {
+    console.error('Error deleting task:', error); // TODO - handle error
   }
 }
