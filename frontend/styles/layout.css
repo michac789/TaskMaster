@@ -45,23 +45,12 @@
 }
 
 .layout-login-container {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 24px;
-    margin: 0 auto;
-    max-width: 600px;
     width: 100%;
-    box-sizing: border-box;
-
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -55%);
-
-    background-color: #fafcfd;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    height: calc(100vh - 50px);
+    background: linear-gradient(
+        135deg, 
+        rgba(230, 242, 235, 0.5),
+        rgba(204, 242, 255, 0.5),
+        rgba(230, 204, 255, 0.5)
+    );
 }
