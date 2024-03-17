@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 import os
@@ -12,6 +13,7 @@ SQLITE3_TEST_DB_PATH = os.path.join(CURR_DIR, 'test.sqlite3')
 
 def create_app(type='dev'):
     app = Flask(__name__)
+    CORS(app)
     if type == 'dev':
         app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{SQLITE3_DB_PATH}'
     elif type == 'test':
