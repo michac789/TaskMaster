@@ -1,13 +1,73 @@
 const ROOT_ENDPOINT = 'https://backend.taskmaster.michac789.com';
-// TODO - remove this token later, create real authentication
-const temp_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE3MTA3NjU0NTB9.COH58zo3A-LW1R6sjFOYFKplJvZYBCEC5ygXlCF3r1g';
-
+const LOGIN_ENDPOINT = `${ROOT_ENDPOINT}/login`;
 const TASKS_ENDPOINT = `${ROOT_ENDPOINT}/tasks`;
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOM loaded with JavaScript!')
-  getTasks();
+  const token = localStorage.getItem('jwtToken');
+  console.log('Token found:', token);
+  // TODO - handle if token is expired or invalid
+  if (token) {
+    handlePageChange('tasks');
+    console.log('Token found:', token);
+  } else {
+    handlePageChange('login');
+  }
 });
+
+const handlePageChange = (pageName) => {
+  const tasksPage = document.getElementById('page-tasks');
+  const loginPage = document.getElementById('page-login');
+  const registerPage = document.getElementById('page-register');
+  const aboutPage = document.getElementById('page-about');
+  tasksPage.style.display = 'none';
+  loginPage.style.display = 'none';
+  registerPage.style.display = 'none';
+  aboutPage.style.display = 'none';
+  switch (pageName) {
+    case 'tasks':
+      tasksPage.style.display = 'block';
+      getTasks();
+      break;
+    case 'login':
+      loginPage.style.display = 'block';
+      break;
+    case 'register':
+      registerPage.style.display = 'block';
+      break;
+    case 'about':
+      aboutPage.style.display = 'block';
+      break;
+  }
+}
+
+const handleLogin = async () => {
+  try {
+    // get the input values (username and password)
+    const username = document.getElementById('login-username').value;
+    const password = document.getElementById('login-password').value;
+    const data = { username, password };
+    
+    // call api to login with the given data
+    const response = await fetch(LOGIN_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+    const responseData = await response.json();
+
+    // if successful, save the token to local storage and redirect to tasks page
+    if (response.status === 200) {
+      localStorage.setItem('jwtToken', responseData.token);
+      handlePageChange('tasks');
+    } else {
+      alert('Invalid email or password');
+    }
+  } catch (error) {
+    console.error('Error logging in:', error); // TODO - handle error
+  }
+}
 
 /**
  * Utility function to create read mode task card
@@ -37,11 +97,11 @@ const createReadableTaskCard = (task) => {
       ${task.description}
     </div>
     <div class="taskcard-actions">
-      <button class="typography-button button-outline-danger button-width-small"
+      <button class="typography-button button-outline-danger button-sm"
           onclick="confirmDeleteTask(${task.id}, '${task.title}')">
         Delete
       </button>
-      <button class="typography-button button-fill-primary button-width-small"
+      <button class="typography-button button-fill-primary button-sm"
           onclick="editTaskCard(${task.id}, '${task.title}', '${task.description}', '${task.due_date}', '${task.status}')">
         Edit
       </button>
@@ -93,7 +153,7 @@ const getTasks = async () => {
     const response = await fetch(TASKS_ENDPOINT, {
       method: 'GET',
       headers: {
-        'Authorization': temp_token
+        'Authorization': localStorage.getItem('jwtToken')
       }
     });
     const data = await response.json();
@@ -120,11 +180,11 @@ const addTaskCard = () => {
   const actionWrapper = document.createElement('div');
   actionWrapper.classList.add('taskcard-actions');
   actionWrapper.innerHTML = `
-    <button class="typography-button button-outline-danger button-width-small"
+    <button class="typography-button button-outline-danger button-sm"
         onclick="cancelCreateTask()">
       Cancel
     </button>
-    <button class="typography-button button-fill-primary button-width-small"
+    <button class="typography-button button-fill-primary button-sm"
         onclick="createTask()">
       Create
     </button>
@@ -169,7 +229,7 @@ const createTask = async () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': temp_token
+        'Authorization': localStorage.getItem('jwtToken')
       },
       body: JSON.stringify(data)
     });
@@ -217,7 +277,7 @@ const deleteTask = async (id) => {
     await fetch(`${TASKS_ENDPOINT}/${id}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': temp_token
+        'Authorization': localStorage.getItem('jwtToken')
       }
     });
 
@@ -241,11 +301,11 @@ const editTaskCard = (id, title, description, date, status) => {
   const actionWrapper = document.createElement('div');
   actionWrapper.classList.add('taskcard-actions');
   actionWrapper.innerHTML = `
-    <button class="typography-button button-outline-danger button-width-small"
+    <button class="typography-button button-outline-danger button-sm"
         onclick="cancelEditTask(${id}, '${title}', '${description}', '${date}', '${status}')">
       Cancel
     </button>
-    <button class="typography-button button-fill-primary button-width-small"
+    <button class="typography-button button-fill-primary button-sm"
         onclick="updateTask(${id})">
       Update
     </button>
@@ -282,7 +342,7 @@ const updateTask = async (id) => {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': temp_token
+        'Authorization': localStorage.getItem('jwtToken')
       },
       body: JSON.stringify(data)
     });
