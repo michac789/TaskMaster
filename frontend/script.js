@@ -1,6 +1,6 @@
 const ROOT_ENDPOINT = 'https://backend.taskmaster.michac789.com';
 // TODO - remove this token later, create real authentication
-const temp_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE3MTA3NDQzMjd9.SwQHfJ9jk4dYoPTP_4bv34OYtyLOIaRi5DB7HekBkpU'
+const temp_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE3MTA3NDg2MDN9.3ohsdxrWx_mZ_q-UErEcs6R6iR2sPgH3IU8iyCZzzW0';
 
 const ALL_TASKS_ENDPOINT = `${ROOT_ENDPOINT}/tasks`;
 

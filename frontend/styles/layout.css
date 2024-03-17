@@ -1,4 +1,28 @@
 
+.layout-topbar-container {
+    position: fixed;
+    width: 100%;
+    height: 50px;
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    background-color: #ffa9ff;
+    border-bottom: 2px solid #cf89cf;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.layout-main-container {
+    width: 100%;
+    height: calc(100vh - 50px);
+    transform: translateY(50px);
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
 .layout-taskcards-container {
     display: flex;
     flex-direction: column;
