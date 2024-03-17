@@ -16,10 +16,10 @@ The frontend should be built using HTML, CSS, and JavaScript. The backend should
 ### Frontend
 
 Create a user-friendly interface where users can:
-- [ ] View a list of tasks
-- [ ] Add a new task with title, description, due date, and status
-- [ ] Update existing tasks
-- [ ] Delete tasks
+- [x] View a list of tasks
+- [x] Add a new task with title, description, due date, and status
+- [x] Update existing tasks
+- [x] Delete tasks
 - [ ] Responsive design
 
 ### Backend
@@ -54,7 +54,7 @@ Design a SQLite database schema to store tasks.
 
 ### Deployment (Optional)
 
-- [ ] Deploy the application to a hosting platform
+- [x] Deploy the application to a hosting platform
 - [ ] Make sure the application is accessible online and functions correctly in a production environment
 
 ## Project Overview
