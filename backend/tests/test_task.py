@@ -32,7 +32,7 @@ class TaskGetAllTestCase(SampleDataMixin, unittest.TestCase):
             'description': 'task1 description',
             'status': 'In Progress',
             'creator': 'user1',
-            'due_date': 'Fri, 15 Mar 2024 00:00:00 GMT',
+            'due_date': '2024-03-15',
         })
         response2 = self.client.get(
             '/tasks',
@@ -94,7 +94,7 @@ class TaskCreateTestCase(SampleDataMixin, unittest.TestCase):
         self.assertIn('title', response.json)
         self.assertEqual(response.json['creator'], 'user1')
         self.assertEqual(response.json['description'], 'new task description')
-        self.assertEqual(response.json['due_date'], 'Fri, 15 Mar 2024 00:00:00 GMT')
+        self.assertEqual(response.json['due_date'], '2024-03-15')
         self.assertEqual(response.json['status'], 'To Do')
         self.assertEqual(response.json['title'], 'new task')
         with self.app.app_context():
@@ -348,7 +348,7 @@ class TaskUpdateTestCase(SampleDataMixin, unittest.TestCase):
         self.assertIn('creator', response.json)
         self.assertEqual(response.json['title'], 'new title')
         self.assertEqual(response.json['description'], 'new description')
-        self.assertEqual(response.json['due_date'], 'Wed, 20 Mar 2024 00:00:00 GMT')
+        self.assertEqual(response.json['due_date'], '2024-03-20')
         self.assertEqual(response.json['status'], 'To Do')
         with self.app.app_context():
             task = db.session.get(Task, 1)
