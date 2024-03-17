@@ -44,8 +44,8 @@ Design a SQLite database schema to store tasks.
 ### Authentication (Optional)
 
 - [x] Implement user authentication using Flask-Login or another authentication library of your choice
-- [ ] Allow users to sign up, log in, and log out
-- [ ] Ensure that only authenticated users can access the task management features
+- [x] Allow users to sign up, log in, and log out
+- [x] Ensure that only authenticated users can access the task management features
 
 ### Testing
 

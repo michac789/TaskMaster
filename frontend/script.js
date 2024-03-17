@@ -4,15 +4,7 @@ const REGISTER_ENDPOINT = `${ROOT_ENDPOINT}/users`;
 const TASKS_ENDPOINT = `${ROOT_ENDPOINT}/tasks`;
 
 document.addEventListener('DOMContentLoaded', () => {
-  const token = localStorage.getItem('jwtToken');
-  console.log('Token found:', token);
-  // TODO - handle if token is expired or invalid
-  if (token) {
-    handlePageChange('tasks');
-    console.log('Token found:', token);
-  } else {
-    handlePageChange('login');
-  }
+  handlePageChange('tasks');
 });
 
 const handlePageChange = (pageName) => {
@@ -27,7 +19,17 @@ const handlePageChange = (pageName) => {
   switch (pageName) {
     case 'tasks':
       tasksPage.style.display = 'block';
-      getTasks();
+
+      const token = localStorage.getItem('jwtToken');
+      console.log('Token found:', token);
+      if (token) {
+        resetTaskPage();
+        tasksPage.style.display = 'block';
+        getTasks();
+        console.log('Token found:', token);
+      } else {
+        handlePageChange('login');
+      }
       break;
     case 'login':
       loginPage.style.display = 'block';
@@ -38,6 +40,14 @@ const handlePageChange = (pageName) => {
     case 'about':
       aboutPage.style.display = 'block';
       break;
+  }
+}
+
+const resetTaskPage = () => {
+  // clear all task cards, leaving only the 'Add Task' button
+  const taskcardsContainer = document.getElementById('taskcards-container');
+  while (taskcardsContainer.children.length > 1) {
+    taskcardsContainer.removeChild(taskcardsContainer.lastChild);
   }
 }
 
@@ -373,7 +383,7 @@ const updateTask = async (id) => {
 
   try {
     // call api to update the task with the given data
-    await fetch(`${TASKS_ENDPOINT}/${id}`, {
+    const response = await fetch(`${TASKS_ENDPOINT}/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -382,6 +392,7 @@ const updateTask = async (id) => {
       body: JSON.stringify(data)
     });
     const responseData = await response.json();
+    console.log('Updated task:', responseData);
 
     // replace the editable task card with the read mode task card
     const taskcardContainer = document.getElementById(`taskcard-edit-${id}`);
