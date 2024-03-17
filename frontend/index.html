@@ -10,10 +10,10 @@
   <link rel="stylesheet" href="styles/button.css">
   <link rel="stylesheet" href="styles/color.css">
   <link rel="stylesheet" href="styles/global.css">
+  <link rel="stylesheet" href="styles/input.css">
   <link rel="stylesheet" href="styles/layout.css">
   <link rel="stylesheet" href="styles/modal.css">
   <link rel="stylesheet" href="styles/taskcard.css">
-  <link rel="stylesheet" href="styles.css">
 
   <link href='https://fonts.googleapis.com/css?family=Noto Sans' rel='stylesheet'>
   <script src="script.js"></script>
@@ -38,7 +38,7 @@
 
   <div class="layout-main-container">
     <div class="layout-taskcards-container" id="taskcards-container">
-      <button class="typography-button button-primary" id="add-task-button"
+      <button class="typography-button button-fill-primary" id="add-task-button"
           onclick="addTaskCard()">
         Add Task
       </button>
@@ -61,11 +61,11 @@
         </div>
       </div>
       <div class="modal-actions">
-        <button class="typography-button button-secondary"
+        <button class="typography-button button-outline-neutral"
             onclick="cancelDeleteTask()">
           Cancel
         </button>
-        <button class="typography-button button-primary" id="delete-task-button">
+        <button class="typography-button button-fill-danger" id="delete-task-button">
           Delete
         </button>
       </div>

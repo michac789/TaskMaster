@@ -37,11 +37,11 @@ const createTaskCard = (task) => {
       ${task.description}
     </div>
     <div class="taskcard-actions">
-      <button class="typography-button button-secondary button-width-small"
+      <button class="typography-button button-outline-danger button-width-small"
           onclick="confirmDeleteTask(${task.id}, '${task.title}')">
         Delete
       </button>
-      <button class="typography-button button-primary button-width-small">
+      <button class="typography-button button-fill-primary button-width-small">
         Edit
       </button>
     </div>
@@ -78,22 +78,31 @@ const addTaskCard = () => {
   createTaskcardContainer.id = 'taskcard-create';
   createTaskcardContainer.innerHTML = `
     <div class="typography-title2">
-      New Task - TODO
+      Creating New Task...
     </div>
-    <input id="input-title" type="text" placeholder="Title" />
-    <input id="input-description" type="text" placeholder="Description" />
-    <input id="input-duedate" type="date" />
-    <select id="input-status">
-      <option value="To Do">TO DO</option>
-      <option value="In Progress">IN PROGRESS</option>
-      <option value="Completed">COMPLETED</option>
-    </select>
+    <input id="input-title" class="input-standard typography-body"
+      type="text" placeholder="Enter title" />
+    <textarea id="input-description" class="input-standard typography-body"
+      type="text" placeholder="Enter description" rows="3"></textarea>
+    <div class="input-grid-row">
+      <input id="input-duedate" class="input-standard typography-body"
+        type="text" onfocus="(this.type='date')" onblur="(this.type='text')"
+        placeholder="Enter due date" />
+      <div class="input-select-wrapper">
+        <label for="input-status" class="typography-subtitle">Status:</label>
+        <select id="input-status" class="input-standard typography-body select-status">
+          <option value="To Do">TO DO</option>
+          <option value="In Progress">IN PROGRESS</option>
+          <option value="Completed">COMPLETED</option>
+        </select>
+      </div>
+    </div>
     <div class="taskcard-actions">
-      <button class="typography-button button-secondary button-width-small"
+      <button class="typography-button button-outline-danger button-width-small"
           onclick="cancelCreateTask()">
         Cancel
       </button>
-      <button class="typography-button button-primary button-width-small"
+      <button class="typography-button button-fill-primary button-width-small"
           onclick="createTask()">
         Create
       </button>
@@ -181,7 +190,6 @@ const cancelDeleteTask = () => {
 }
 
 const deleteTask = async (id) => {
-  console.log('Deleting task with id:', id);
   try {
     // call api to delete task with the given id
     await fetch(`${TASKS_ENDPOINT}/${id}`, {
