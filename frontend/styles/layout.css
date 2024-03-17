@@ -5,11 +5,8 @@
     height: 50px;
     box-sizing: border-box;
 
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
 
     background-color: #ffa9ff;
     border-bottom: 2px solid #cf89cf;
