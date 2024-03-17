@@ -20,10 +20,11 @@
 }
 
 .taskcard-badge {
-    width: 100px;
+    width: 128px;
+    box-sizing: border-box;
     text-align: center;
     color: #fafcfd;
-    padding: 4px 12px;
+    padding: 4px;
     transform: translateX(16px);
 }
 
