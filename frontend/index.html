@@ -18,87 +18,39 @@
   <script src="script.js"></script>
 </head>
 <body>
-  <h1 class="sampleclass">
-    Welcome to TaskMaster
-  </h1>
-
-  <div>
-    <h1>Typography Samples</h1>
-    <p class="typography-title1">(title1) The red fox jumps over the lazy dog</p>
-    <p class="typography-title2">(title2) The red fox jumps over the lazy dog</p>
-    <p class="typography-subtitle">(subtitle) The red fox jumps over the lazy dog</p>
-    <p class="typography-body">(body) The red fox jumps over the lazy dog</p>
-    <p class="typography-button">(button) The red fox jumps over the lazy dog</p>
-    <p class="typography-overline">(overline) The red fox jumps over the lazy dog</p>
+  <div class="layout-topbar-container">
+    <div class="typography-title1">
+      TaskMaster Logo (TODO)
+    </div>
+    <div style="display: flex; flex-direction: row; align-items: center; gap:16px;">
+      <div class="typography-button">
+        My Tasks
+      </div>
+      <div class="typography-button">
+        About
+      </div>
+    </div>
+    <div>
+      Profile (TODO)
+    </div>
   </div>
 
-  <div class="layout-taskcards-container" id="taskcards-container">
-    <button class="typography-button button-primary" id="add-task-button"
-        onclick="addTaskCard()">
-      Add Task
-    </button>
-
-    <div class="taskcard-container">
-      <div class="taskcard-header">
-        <div class="typography-title2">
-          SC2001 Assignment 3: Graph Algorithm
-        </div>
-        <div class="typography-subtitle taskcard-badge bg-warning">
-          To Do
-        </div>
-      </div>
-      <div class="typography-overline">
-        Due date: Sun, 24 Mar 2024
-      </div>
-      <div class="typography-body">
-        Do the assignment and submit it on time as per the requirements on the pdf file available on NTU Learn, estimated time is about 4 hours to complete the assignment, prerequisite watch lecture 6 first.  
-      </div>
-      <div class="taskcard-actions">
-        <button class="typography-button button-primary">Edit</button>
-        <button class="typography-button button-secondary">Delete</button>
-      </div>
+  <div class="layout-main-container">
+    <div style="margin: 16px;">
+      <h1>Typography Samples</h1>
+      <p class="typography-title1">(title1) The red fox jumps over the lazy dog</p>
+      <p class="typography-title2">(title2) The red fox jumps over the lazy dog</p>
+      <p class="typography-subtitle">(subtitle) The red fox jumps over the lazy dog</p>
+      <p class="typography-body">(body) The red fox jumps over the lazy dog</p>
+      <p class="typography-button">(button) The red fox jumps over the lazy dog</p>
+      <p class="typography-overline">(overline) The red fox jumps over the lazy dog</p>
     </div>
-
-    <div class="taskcard-container">
-      <div class="taskcard-header">
-        <div class="typography-title2">
-          SC2001 Assignment 3: Graph Algorithm
-        </div>
-        <div class="typography-subtitle taskcard-badge bg-success">
-          Completed
-        </div>
-      </div>
-      <div class="typography-overline">
-        Due date: Sun, 24 Mar 2024
-      </div>
-      <div class="typography-body">
-        Do the assignment and submit it on time as per the requirements on the pdf file available on NTU Learn, estimated time is about 4 hours to complete the assignment, prerequisite watch lecture 6 first.  
-      </div>
-      <div class="taskcard-actions">
-        <button class="typography-button button-primary">Edit</button>
-        <button class="typography-button button-secondary">Delete</button>
-      </div>
-    </div>
-
-    <div class="taskcard-container">
-      <div class="taskcard-header">
-        <div class="typography-title2">
-          SC2001 Assignment 3: Graph Algorithm
-        </div>
-        <div class="typography-subtitle taskcard-badge bg-primary">
-          In Progress
-        </div>
-      </div>
-      <div class="typography-overline">
-        Due date: Sun, 24 Mar 2024
-      </div>
-      <div class="typography-body">
-        Do the assignment and submit it on time as per the requirements on the pdf file available on NTU Learn, estimated time is about 4 hours to complete the assignment, prerequisite watch lecture 6 first.  
-      </div>
-      <div class="taskcard-actions">
-        <button class="typography-button button-primary">Edit</button>
-        <button class="typography-button button-secondary">Delete</button>
-      </div>
+  
+    <div class="layout-taskcards-container" id="taskcards-container">
+      <button class="typography-button button-primary" id="add-task-button"
+          onclick="addTaskCard()">
+        Add Task
+      </button>
     </div>
   </div>
 </body>
