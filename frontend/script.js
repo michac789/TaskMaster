@@ -1,13 +1,14 @@
 const ROOT_ENDPOINT = 'https://backend.taskmaster.michac789.com';
 const LOGIN_ENDPOINT = `${ROOT_ENDPOINT}/login`;
 const REGISTER_ENDPOINT = `${ROOT_ENDPOINT}/users`;
+const PROFILE_ENDPOINT = `${ROOT_ENDPOINT}/me`;
 const TASKS_ENDPOINT = `${ROOT_ENDPOINT}/tasks`;
 
 document.addEventListener('DOMContentLoaded', () => {
   handlePageChange('tasks');
 });
 
-const handlePageChange = (pageName) => {
+const handlePageChange = async (pageName) => {
   const tasksPage = document.getElementById('page-tasks');
   const loginPage = document.getElementById('page-login');
   const registerPage = document.getElementById('page-register');
@@ -18,15 +19,17 @@ const handlePageChange = (pageName) => {
   aboutPage.style.display = 'none';
   switch (pageName) {
     case 'tasks':
-      tasksPage.style.display = 'block';
-
+      // if no token or invalid token, redirect to login page
       const token = localStorage.getItem('jwtToken');
-      console.log('Token found:', token);
       if (token) {
-        resetTaskPage();
-        tasksPage.style.display = 'block';
-        getTasks();
-        console.log('Token found:', token);
+        const { username } = await getProfile();
+        if (username) {
+          resetTaskPage();
+          tasksPage.style.display = 'block';
+          getTasks();
+        } else {
+          handlePageChange('login');
+        }
       } else {
         handlePageChange('login');
       }
@@ -41,8 +44,39 @@ const handlePageChange = (pageName) => {
       break;
     case 'about':
       aboutPage.style.display = 'block';
+      resetAboutPage();
       break;
   }
+}
+
+const getProfile = async () => {
+  try {
+    // call api to get user profile
+    const response = await fetch(PROFILE_ENDPOINT, {
+      method: 'GET',
+      headers: {
+        'Authorization': localStorage.getItem('jwtToken')
+      }
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    return null;
+  }
+}
+
+const resetTaskPage = () => {
+  // clear all task cards, leaving only the 'Add Task' button
+  const taskcardsContainer = document.getElementById('taskcards-container');
+  while (taskcardsContainer.children.length > 1) {
+    taskcardsContainer.removeChild(taskcardsContainer.lastChild);
+  }
+
+  // handle navbar option change
+  const navbarOptionTasks = document.getElementById('navbar-option-tasks');
+  const navbarOptionAbout = document.getElementById('navbar-option-about');
+  navbarOptionTasks.classList.add('navbar-selected');
+  navbarOptionAbout.classList.remove('navbar-selected');
 }
 
 const resetLoginPage = () => {
@@ -65,6 +99,12 @@ const resetLoginPage = () => {
       }
     }
   });
+
+  // handle navbar option change
+  const navbarOptionTasks = document.getElementById('navbar-option-tasks');
+  const navbarOptionAbout = document.getElementById('navbar-option-about');
+  navbarOptionTasks.classList.add('navbar-selected');
+  navbarOptionAbout.classList.remove('navbar-selected');
 }
 
 const resetRegisterPage = () => {
@@ -89,12 +129,12 @@ const resetRegisterPage = () => {
   });
 }
 
-const resetTaskPage = () => {
-  // clear all task cards, leaving only the 'Add Task' button
-  const taskcardsContainer = document.getElementById('taskcards-container');
-  while (taskcardsContainer.children.length > 1) {
-    taskcardsContainer.removeChild(taskcardsContainer.lastChild);
-  }
+const resetAboutPage = () => {
+  // handle navbar option change
+  const navbarOptionTasks = document.getElementById('navbar-option-tasks');
+  const navbarOptionAbout = document.getElementById('navbar-option-about');
+  navbarOptionTasks.classList.remove('navbar-selected');
+  navbarOptionAbout.classList.add('navbar-selected');
 }
 
 const handleLogin = async () => {
@@ -463,4 +503,10 @@ const updateTask = async (id) => {
   catch (error) {
     console.error('Error updating task:', error); // TODO - handle error
   }
+}
+
+const handleLogoClick = () => {
+  // open source code (GitHub) in a new tab
+  const GITHUB_LINK = 'https://github.com/michac789/TaskMaster';
+  window.open(GITHUB_LINK, '_blank');
 }
