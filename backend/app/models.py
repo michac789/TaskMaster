@@ -93,7 +93,7 @@ class Task(db.Model):
             'id': self.id,
             'title': self.title,
             'description': self.description,
-            'due_date': self.due_date,
+            'due_date': self.due_date.strftime('%Y-%m-%d'),
             'status': self.status,
             'creator': self.user.username if self.user else None,
         }
