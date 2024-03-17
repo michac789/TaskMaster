@@ -75,6 +75,7 @@
             <input class="input-standard typography-body" id="login-password"
               type="password" placeholder="Password">
           </div>
+          <div class="typography-error" id="login-error"></div>
           <div class="typography-overline">
             Don't have an account?
             <span class="typography-link" onclick="handlePageChange('register')">
@@ -114,6 +115,14 @@
             <input class="input-standard typography-body" id="register-password"
               type="password" placeholder="Password">
           </div>
+          <div>
+            <label class="typography-body" for="register-password-confirm">
+              Confirm Password
+            </label>
+            <input class="input-standard typography-body" id="register-password-confirm"
+              type="password" placeholder="Confirm Password">
+          </div>
+          <div class="typography-error" id="register-error"></div>
           <div class="typography-overline">
             Already have an account?
             <span class="typography-link" onclick="handlePageChange('login')">

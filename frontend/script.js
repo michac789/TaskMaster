@@ -73,7 +73,11 @@ const handleLogin = async () => {
       localStorage.setItem('jwtToken', responseData.token);
       handlePageChange('tasks');
     } else {
-      alert('Invalid email or password');
+
+      // if unsuccessful, display the error message
+      const error = await responseData['error']
+      const errorDiv = document.getElementById('login-error');
+      errorDiv.innerText = `Error: ${error}`;
     }
   } catch (error) {
     console.error('Error logging in:', error); // TODO - handle error
@@ -85,7 +89,15 @@ const handleRegister = async () => {
     // get the input values (username, email, and password)
     const username = document.getElementById('register-username').value;
     const password = document.getElementById('register-password').value;
+    const passwordConfirmation = document.getElementById('register-password-confirm').value;
     const data = { username, password };
+
+    // validate password and password confirmation match
+    if (password !== passwordConfirmation) {
+      const errorDiv = document.getElementById('register-error');
+      errorDiv.innerText = 'Error: passwords do not match';
+      return;
+    }
 
     // call api to register with the given data
     const response = await fetch(REGISTER_ENDPOINT, {
@@ -95,12 +107,15 @@ const handleRegister = async () => {
       },
       body: JSON.stringify(data)
     });
+    const responseData = await response.json();
 
-    // if successful, redirect to login page
+    // if successful, redirect to login page, else display the error message
     if (response.status === 201) {
       handlePageChange('login');
     } else {
-      alert('Error registering user');
+      const error = await responseData['error']
+      const errorDiv = document.getElementById('register-error');
+      errorDiv.innerText = `Error: ${error}`;
     }
   }
   catch (error) {
