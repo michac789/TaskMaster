@@ -65,3 +65,12 @@
     text-transform: uppercase;
     cursor: pointer;
 }
+
+.typography-error {
+    font-family: Noto Sans, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 150%;
+    letter-spacing: 0;
+    color: #db4634;
+}
