@@ -204,11 +204,9 @@
           </span>
         </div>
         <button class="typography-button button-fw button-outline-warning"
-            onclick="" id="profile-button-change-password">
+            onclick="openChangePasswordModal()" id="profile-button-change-password">
           Change Password
         </button>
-        <section id="change-password-section">
-        </section>
       </div>
       <div class="modal-actions">
         <button class="typography-button button-sm button-outline-neutral"
@@ -226,6 +224,50 @@
         <button class="typography-button button-sm button-fill-warning"
             id="profile-button-logout" onclick="handleLogout()">
           Logout
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modal-change-password">
+    <div class="modal-container" id="modal-container">
+      <div class="modal-title typography-title2">
+        Change Password
+      </div>
+      <div class="modal-body typography-body">
+        <div>
+          <label class="typography-body" for="change-password-current">
+            Current Password
+          </label>
+          <input class="input-standard typography-body" id="change-password-current"
+            type="password" placeholder="Enter current password..." aria-labelledby="current password">
+        </div>
+        <div>
+          <label class="typography-body" for="change-password-new">
+            New Password
+          </label>
+          <input class="input-standard typography-body" id="change-password-new"
+            type="password" placeholder="Enter new password..." aria-labelledby="new password">
+        </div>
+        <div>
+          <label class="typography-body" for="change-password-confirm">
+            Confirm New Password
+          </label>
+          <input class="input-standard typography-body" id="change-password-confirm"
+            type="password" placeholder="Enter new password again..." aria-labelledby="confirm new password">
+        </div>
+        <div class="typography-error" id="change-password-error"
+          role="alert" aria-live="polite"></div>
+      </div>
+      
+      <div class="modal-actions">
+        <button class="typography-button button-sm button-outline-danger"
+            onclick="closeChangePasswordModal()">
+          Cancel
+        </button>
+        <button class="typography-button button-sm button-fill-primary"
+            onclick="changePassword()">
+          Confirm
         </button>
       </div>
     </div>

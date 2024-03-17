@@ -24,7 +24,7 @@ const handlePageChange = async (pageName) => {
       if (token) {
         const { username } = await getProfile();
         if (username) {
-          resetTaskPage();
+          resetTaskPage(username);
           tasksPage.style.display = 'block';
           getTasks();
         } else {
@@ -59,13 +59,16 @@ const getProfile = async () => {
       }
     });
     const data = await response.json();
-    return data;
+    if (response.status === 200) {
+      return data;
+    }
+    return null;
   } catch (error) {
     return null;
   }
 }
 
-const resetTaskPage = () => {
+const resetTaskPage = (username) => {
   // clear all task cards, leaving only the 'Add Task' button
   const taskcardsContainer = document.getElementById('taskcards-container');
   while (taskcardsContainer.children.length > 1) {
@@ -77,6 +80,11 @@ const resetTaskPage = () => {
   const navbarOptionAbout = document.getElementById('navbar-option-about');
   navbarOptionTasks.classList.add('navbar-selected');
   navbarOptionAbout.classList.remove('navbar-selected');
+
+  // show username in the navbar
+  const usernameDiv = document.getElementById('navbar-username');
+  usernameDiv.classList.remove('text-gray');
+  usernameDiv.innerText = username;
 }
 
 const resetLoginPage = () => {
@@ -105,6 +113,11 @@ const resetLoginPage = () => {
   const navbarOptionAbout = document.getElementById('navbar-option-about');
   navbarOptionTasks.classList.add('navbar-selected');
   navbarOptionAbout.classList.remove('navbar-selected');
+
+  // username in navbar changed to 'Not Logged In'
+  const usernameDiv = document.getElementById('navbar-username');
+  usernameDiv.classList.add('text-gray');
+  usernameDiv.innerText = 'Not Logged In';
 }
 
 const resetRegisterPage = () => {
@@ -139,14 +152,19 @@ const resetAboutPage = () => {
 
 const handleProfileClick = async () => {
   // get the user's profile data
-  const { id, username } = await getProfile();
+  const data = await getProfile();
 
   // if user is not logged in, hide logout and change password buttons, add text gray
-  if (!id) {
+  if (!data) {
     const logoutButton = document.getElementById('profile-button-logout');
     logoutButton.style.display = 'none';
     const changePasswordButton = document.getElementById('profile-button-change-password');
     changePasswordButton.style.display = 'none';
+
+    const loginButton = document.getElementById('profile-button-login');
+    loginButton.style.display = 'block';
+    const registerButton = document.getElementById('profile-button-register');
+    registerButton.style.display = 'block';
 
     const profileIdSpan = document.getElementById('modal-profile-id');
     profileIdSpan.innerText = 'Not logged in';
@@ -159,16 +177,21 @@ const handleProfileClick = async () => {
   // if logged in, display id and username, hide login and register buttons
   else {
     const profileIdSpan = document.getElementById('modal-profile-id');
-    profileIdSpan.innerText = id;
+    profileIdSpan.innerText = data.id;
     profileIdSpan.classList.remove('text-gray');
     const profileUsernameSpan = document.getElementById('modal-profile-username');
-    profileUsernameSpan.innerText = username;
+    profileUsernameSpan.innerText = data.username;
     profileUsernameSpan.classList.remove('text-gray');
 
     const loginButton = document.getElementById('profile-button-login');
     loginButton.style.display = 'none';
     const registerButton = document.getElementById('profile-button-register');
     registerButton.style.display = 'none';
+
+    const changePasswordButton = document.getElementById('profile-button-change-password');
+    changePasswordButton.style.display = 'block';
+    const logoutButton = document.getElementById('profile-button-logout');
+    logoutButton.style.display = 'block';
   }
 
   // open profile modal
@@ -270,6 +293,57 @@ const handleLoginRedirect = () => {
 const handleRegisterRedirect = () => {
   closeProfileModal();
   handlePageChange('register');
+}
+
+const openChangePasswordModal = () => {
+  // close profile modal, open change password modal
+  closeProfileModal();
+  const changePasswordModal = document.getElementById('modal-change-password');
+  changePasswordModal.style.visibility = 'visible';
+}
+
+const closeChangePasswordModal = () => {
+  const changePasswordModal = document.getElementById('modal-change-password');
+  changePasswordModal.style.visibility = 'hidden';
+}
+
+const changePassword = async () => {
+  // get the input values
+  const currentPassword = document.getElementById('change-password-current').value;
+  const newPassword = document.getElementById('change-password-new').value;
+  const newPasswordConfirm = document.getElementById('change-password-confirm').value;
+  const data = { current_password: currentPassword, new_password: newPassword };
+
+  // validate new password and new password confirmation match
+  if (newPassword !== newPasswordConfirm) {
+    const errorDiv = document.getElementById('change-password-error');
+    errorDiv.innerText = 'Error: new passwords do not match';
+    return;
+  }
+
+  // call api to change password with the given data
+  try {
+    const response = await fetch(PROFILE_ENDPOINT, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': localStorage.getItem('jwtToken')
+      },
+      body: JSON.stringify(data)
+    });
+    const responseData = await response.json();
+
+    // if successful, close change password modal, else display the error message
+    if (response.status === 200) {
+      closeChangePasswordModal();
+    } else {
+      const error = await responseData['error']
+      const errorDiv = document.getElementById('change-password-error');
+      errorDiv.innerText = `Error: ${error}`;
+    }
+  } catch (error) {
+    window.alert('Something went wrong. Please try again.');
+  }
 }
 
 /**
