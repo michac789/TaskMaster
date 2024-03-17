@@ -1,5 +1,6 @@
 const ROOT_ENDPOINT = 'https://backend.taskmaster.michac789.com';
 const LOGIN_ENDPOINT = `${ROOT_ENDPOINT}/login`;
+const REGISTER_ENDPOINT = `${ROOT_ENDPOINT}/users`;
 const TASKS_ENDPOINT = `${ROOT_ENDPOINT}/tasks`;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -67,6 +68,40 @@ const handleLogin = async () => {
   } catch (error) {
     console.error('Error logging in:', error); // TODO - handle error
   }
+}
+
+const handleRegister = async () => {
+  try {
+    // get the input values (username, email, and password)
+    const username = document.getElementById('register-username').value;
+    const password = document.getElementById('register-password').value;
+    const data = { username, password };
+
+    // call api to register with the given data
+    const response = await fetch(REGISTER_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    // if successful, redirect to login page
+    if (response.status === 201) {
+      handlePageChange('login');
+    } else {
+      alert('Error registering user');
+    }
+  }
+  catch (error) {
+    console.error('Error registering user:', error); // TODO - handle error
+  }
+}
+
+const handleLogout = () => {
+  // remove the token from local storage and redirect to login page
+  localStorage.removeItem('jwtToken');
+  handlePageChange('login');
 }
 
 /**

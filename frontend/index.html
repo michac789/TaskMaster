@@ -34,6 +34,10 @@
     </div>
     <div>
       Profile (TODO)
+      <div class="button-outline-neutral typography-button"
+          onclick="handleLogout()">
+        Logout
+      </div>
     </div>
   </div>
 
@@ -41,7 +45,7 @@
 
     <div id="page-tasks">
       <div class="layout-taskcards-container" id="taskcards-container">
-        <button class="typography-button button-fill-primary" id="add-task-button"
+        <button class="typography-button button-fill-primary button-lg" id="add-task-button"
             onclick="addTaskCard()">
           Add Task
         </button>
@@ -95,19 +99,19 @@
         <div class="typography-subtitle">
           Please provide a username and password to register!
         </div>
-        <form class="login-inputs">
+        <div class="login-inputs">
           <div>
-            <label class="typography-body" for="login-username">
+            <label class="typography-body" for="register-username">
               Username
             </label>
-            <input class="input-standard typography-body" id="login-username"
+            <input class="input-standard typography-body" id="register-username"
               type="text" placeholder="Username">
           </div>
           <div>
-            <label class="typography-body" for="login-password">
+            <label class="typography-body" for="register-password">
               Password
             </label>
-            <input class="input-standard typography-body" id="login-password"
+            <input class="input-standard typography-body" id="register-password"
               type="password" placeholder="Password">
           </div>
           <div class="typography-overline">
@@ -122,7 +126,7 @@
               Register
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
 
@@ -130,6 +134,7 @@
       About page (TODO)
     </div>
   </div>
+
 
   <div class="modal-backdrop" id="modal-backdrop">
     <div class="modal-container" id="modal-container">
