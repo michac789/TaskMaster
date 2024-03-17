@@ -1,0 +1,36 @@
+
+.taskcard-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+
+    background-color: #d4f1f9;
+    border: 1px solid #acacad;
+    border-radius: 8px;
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.taskcard-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.taskcard-badge {
+    width: 100px;
+    text-align: center;
+    color: #fafcfd;
+    padding: 4px 12px;
+    transform: translateX(16px);
+}
+
+.taskcard-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+}

@@ -1,0 +1,55 @@
+
+.typography-title1 {
+    font-family: Noto Sans, sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 140%;
+    letter-spacing: 0;
+    color: #2d2d2d;
+}
+
+.typography-title2 {
+    font-family: Noto Sans, sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 150%;
+    letter-spacing: 0.15px;
+    color: #2d2d2d;
+}
+
+.typography-subtitle {
+    font-family: Noto Sans, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 150%;
+    letter-spacing: 0.25px;
+    color: #2d2d2d;
+}
+
+.typography-body {
+    font-family: Noto Sans, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 150%;
+    letter-spacing: 0;
+    color: #2d2d2d;
+}
+
+.typography-button {
+    font-family: Noto Sans, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 150%;
+    letter-spacing: 0.75px;
+    color: #2d2d2d;
+}
+
+.typography-overline {
+    font-family: Noto Sans, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 140%;
+    letter-spacing: 1.5px;
+    color: #2d2d2d;
+    text-transform: uppercase;
+}
