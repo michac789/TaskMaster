@@ -62,5 +62,6 @@
     letter-spacing: 0.7px;
     color: #3c62a2;
     text-decoration: underline;
+    text-transform: uppercase;
     cursor: pointer;
 }
