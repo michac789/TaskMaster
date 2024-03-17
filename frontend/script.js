@@ -137,6 +137,50 @@ const resetAboutPage = () => {
   navbarOptionAbout.classList.add('navbar-selected');
 }
 
+const handleProfileClick = async () => {
+  // get the user's profile data
+  const { id, username } = await getProfile();
+
+  // if user is not logged in, hide logout and change password buttons, add text gray
+  if (!id) {
+    const logoutButton = document.getElementById('profile-button-logout');
+    logoutButton.style.display = 'none';
+    const changePasswordButton = document.getElementById('profile-button-change-password');
+    changePasswordButton.style.display = 'none';
+
+    const profileIdSpan = document.getElementById('modal-profile-id');
+    profileIdSpan.innerText = 'Not logged in';
+    profileIdSpan.classList.add('text-gray');
+    const profileUsernameSpan = document.getElementById('modal-profile-username');
+    profileUsernameSpan.innerText = 'Not logged in';
+    profileUsernameSpan.classList.add('text-gray');
+  }
+
+  // if logged in, display id and username, hide login and register buttons
+  else {
+    const profileIdSpan = document.getElementById('modal-profile-id');
+    profileIdSpan.innerText = id;
+    profileIdSpan.classList.remove('text-gray');
+    const profileUsernameSpan = document.getElementById('modal-profile-username');
+    profileUsernameSpan.innerText = username;
+    profileUsernameSpan.classList.remove('text-gray');
+
+    const loginButton = document.getElementById('profile-button-login');
+    loginButton.style.display = 'none';
+    const registerButton = document.getElementById('profile-button-register');
+    registerButton.style.display = 'none';
+  }
+
+  // open profile modal
+  const profileModal = document.getElementById('modal-profile');
+  profileModal.style.visibility = 'visible';
+}
+
+const closeProfileModal = () => {
+  const profileModal = document.getElementById('modal-profile');
+  profileModal.style.visibility = 'hidden';
+}
+
 const handleLogin = async () => {
   try {
     // get the input values (username and password)
@@ -210,9 +254,22 @@ const handleRegister = async () => {
 }
 
 const handleLogout = () => {
+  // close profile modal if open
+  closeProfileModal();
+
   // remove the token from local storage and redirect to login page
   localStorage.removeItem('jwtToken');
   handlePageChange('login');
+}
+
+const handleLoginRedirect = () => {
+  closeProfileModal();
+  handlePageChange('login');
+}
+
+const handleRegisterRedirect = () => {
+  closeProfileModal();
+  handlePageChange('register');
 }
 
 /**
@@ -399,7 +456,7 @@ const createTask = async () => {
 
 const confirmDeleteTask = (id, title) => {
   // open delete confirmation modal
-  const modalBackdrop = document.getElementById('modal-backdrop') 
+  const modalBackdrop = document.getElementById('modal-delete') 
   modalBackdrop.style.visibility = 'visible';
 
   // render task title in the modal
@@ -413,7 +470,7 @@ const confirmDeleteTask = (id, title) => {
 
 const cancelDeleteTask = () => {
   // close delete confirmation modal
-  const modalBackdrop = document.getElementById('modal-backdrop') 
+  const modalBackdrop = document.getElementById('modal-delete') 
   modalBackdrop.style.visibility = 'hidden';
 }
 
