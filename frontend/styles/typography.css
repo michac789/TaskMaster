@@ -53,3 +53,14 @@
     color: #2d2d2d;
     text-transform: uppercase;
 }
+
+.typography-link {
+    font-family: Noto Sans, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 150%;
+    letter-spacing: 0.7px;
+    color: #3c62a2;
+    text-decoration: underline;
+    cursor: pointer;
+}

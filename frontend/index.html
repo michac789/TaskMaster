@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="styles/global.css">
   <link rel="stylesheet" href="styles/input.css">
   <link rel="stylesheet" href="styles/layout.css">
+  <link rel="stylesheet" href="styles/login.css">
   <link rel="stylesheet" href="styles/modal.css">
   <link rel="stylesheet" href="styles/taskcard.css">
 
@@ -37,11 +38,96 @@
   </div>
 
   <div class="layout-main-container">
-    <div class="layout-taskcards-container" id="taskcards-container">
-      <button class="typography-button button-fill-primary" id="add-task-button"
-          onclick="addTaskCard()">
-        Add Task
-      </button>
+
+    <div id="page-tasks">
+      <div class="layout-taskcards-container" id="taskcards-container">
+        <button class="typography-button button-fill-primary" id="add-task-button"
+            onclick="addTaskCard()">
+          Add Task
+        </button>
+      </div>
+    </div>
+
+    <div id="page-login">
+      <div class="layout-login-container">
+        <div class="typography-title1">
+          Welcome to Task Master App!
+        </div>
+        <div class="typography-subtitle">
+          Please login to see 'My Tasks' page!
+        </div>
+        <div class="login-inputs">
+          <div>
+            <label class="typography-body" for="login-username">
+              Username
+            </label>
+            <input class="input-standard typography-body" id="login-username"
+              type="text" placeholder="Username">
+          </div>
+          <div>
+            <label class="typography-body" for="login-password">
+              Password
+            </label>
+            <input class="input-standard typography-body" id="login-password"
+              type="password" placeholder="Password">
+          </div>
+          <div class="typography-overline">
+            Don't have an account?
+            <span class="typography-link" onclick="handlePageChange('register')">
+              Register here
+            </span>
+          </div>
+          <div class="login-button">
+            <button class="typography-button button-fill-primary button-lg"
+                type="submit" onclick="handleLogin()">
+              Login
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-register">
+      <div class="layout-login-container">
+        <div class="typography-title1">
+          Register to Task Master App!
+        </div>
+        <div class="typography-subtitle">
+          Please provide a username and password to register!
+        </div>
+        <form class="login-inputs">
+          <div>
+            <label class="typography-body" for="login-username">
+              Username
+            </label>
+            <input class="input-standard typography-body" id="login-username"
+              type="text" placeholder="Username">
+          </div>
+          <div>
+            <label class="typography-body" for="login-password">
+              Password
+            </label>
+            <input class="input-standard typography-body" id="login-password"
+              type="password" placeholder="Password">
+          </div>
+          <div class="typography-overline">
+            Already have an account?
+            <span class="typography-link" onclick="handlePageChange('login')">
+              Login here
+            </span>
+          </div>
+          <div class="login-button">
+            <button class="typography-button button-fill-primary button-lg"
+                type="submit" onclick="handleRegister()">
+              Register
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="page-about">
+      About page (TODO)
     </div>
   </div>
 
