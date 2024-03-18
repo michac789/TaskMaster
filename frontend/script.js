@@ -265,6 +265,7 @@ const handleRegister = async () => {
     // if successful, redirect to login page, else display the error message
     if (response.status === 201) {
       handlePageChange('login');
+      window.alert('Registration successful. Please log in.');
     } else {
       const error = await responseData['error']
       const errorDiv = document.getElementById('register-error');
@@ -466,6 +467,12 @@ const getTasks = async () => {
       const taskcardContainer = createReadableTaskCard(task);
       taskcardsContainer.appendChild(taskcardContainer);
     })
+
+    // render empty state if there is no task
+    if (data.length === 0) {
+      const emptyState = document.getElementById('task-empty');
+      emptyState.style.visibility = 'visible';
+    }
   } catch (error) {
     window.alert('Something went wrong. Please try again.');
   }
@@ -563,6 +570,12 @@ const createTask = async () => {
       taskcardsContainer.appendChild(taskcardContainer);
     }
     cancelCreateTask();
+
+    // remove empty state (if present)
+    const emptyState = document.getElementById('task-empty');
+    emptyState.style.visibility = 'hidden';
+
+    window.alert('Task created successfully.');
   }
   catch (error) {
     window.alert('Something went wrong. Please try again.');
@@ -612,8 +625,16 @@ const deleteTask = async (id) => {
     const taskcardContainer = document.getElementById(`taskcard-${id}`);
     taskcardContainer.remove();
 
+    // if no task card left, show empty state
+    const taskcardsContainer = document.getElementById('taskcards-container');
+    if (taskcardsContainer.children.length === 1) {
+      const emptyState = document.getElementById('task-empty');
+      emptyState.style.visibility = 'visible';
+    }
+
     // close delete confirmation modal
     cancelDeleteTask();
+    window.alert('Task deleted successfully.');
   }
   catch (error) {
     window.alert('Something went wrong. Please try again.');
@@ -696,6 +717,7 @@ const updateTask = async (id) => {
     const taskcardContainer = document.getElementById(`taskcard-edit-${id}`);
     const taskcard = createReadableTaskCard({ id, title, description, due_date: date, status });
     taskcardContainer.replaceWith(taskcard);
+    window.alert('Task updated successfully.');
   }
   catch (error) {
     window.alert('Something went wrong. Please try again.');
