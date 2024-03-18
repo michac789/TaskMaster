@@ -552,11 +552,16 @@ const createTask = async () => {
       return;
     }
     
-    // append the new task card to the task cards container
+    // append the new task card (at the top, below the 'Add Task' button)
     data['id'] = responseData['id'];
     const taskcardsContainer = document.getElementById('taskcards-container');
     const taskcardContainer = createReadableTaskCard(data);
-    taskcardsContainer.appendChild(taskcardContainer);
+    if (taskcardsContainer.children.length > 1) {
+      const firstChild = taskcardsContainer.children[1];
+      taskcardsContainer.insertBefore(taskcardContainer, firstChild.nextSibling);
+    } else {
+      taskcardsContainer.appendChild(taskcardContainer);
+    }
     cancelCreateTask();
   }
   catch (error) {
