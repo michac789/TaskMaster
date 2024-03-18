@@ -11,6 +11,11 @@
     background-color: #ffa9ff;
     border-bottom: 2px solid #cf89cf;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    @media (max-width: 768px) {
+        grid-template-columns: 0 2fr 1fr;
+        height: 40px;
+    }
 }
 
 .layout-main-container {
@@ -19,6 +24,11 @@
     transform: translateY(50px);
     box-sizing: border-box;
     overflow-y: auto;
+
+    @media (max-width: 768px) {
+        height: calc(100vh - 40px);
+        transform: translateY(40px);
+    }
 }
 
 .layout-taskcards-container {
@@ -32,6 +42,12 @@
     width: 100vw;
     max-width: 1000px;
     box-sizing: border-box;
+
+    @media (max-width: 768px) {
+        width: 100%;
+        gap: 12px;
+        padding: 12px;
+    }
 }
 
 .layout-login-container {
@@ -43,6 +59,10 @@
         rgba(204, 242, 255, 0.5),
         rgba(230, 204, 255, 0.5)
     );
+
+    @media (max-width: 768px) {
+        height: calc(100vh - 40px);
+    }
 }
 
 .layout-about {
@@ -56,4 +76,9 @@
     );
     padding: 32px;
     box-sizing: border-box;
+
+    @media (max-width: 768px) {
+        padding: 16px;
+        height: calc(100vh - 40px);
+    }
 }

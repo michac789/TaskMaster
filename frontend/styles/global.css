@@ -21,3 +21,13 @@ body {
 ul {
     margin: 0;
 }
+
+@media (max-width: 768px) {
+    *::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+        }
+    *::-webkit-scrollbar-thumb {
+        border-radius: 2px;
+    }
+}
