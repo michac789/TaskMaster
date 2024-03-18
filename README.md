@@ -20,7 +20,6 @@ Create a user-friendly interface where users can:
 - [x] Add a new task with title, description, due date, and status
 - [x] Update existing tasks
 - [x] Delete tasks
-- [ ] Responsive design
 
 ### Backend
 
