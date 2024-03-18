@@ -44,3 +44,16 @@
         rgba(230, 204, 255, 0.5)
     );
 }
+
+.layout-about {
+    width: 100%;
+    height: calc(100vh - 50px);
+    background: linear-gradient(
+        to bottom right,
+        #ffc0cb,
+        #87ceeb,
+        #90ee90
+    );
+    padding: 32px;
+    box-sizing: border-box;
+}
