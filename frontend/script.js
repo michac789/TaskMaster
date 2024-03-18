@@ -395,6 +395,7 @@ const createReadableTaskCard = (task) => {
 const createEditableTaskCard = (task, divId) => {
   const taskcardContainer = document.createElement('div');
   taskcardContainer.classList.add('taskcard-container');
+  taskcardContainer.classList.add('taskcard-editable-identifier')
   taskcardContainer.id = divId;
   taskcardContainer.innerHTML = `
     <div class="typography-title2">
@@ -448,6 +449,13 @@ const getTasks = async () => {
 }
 
 const addTaskCard = () => {
+  // if there is another task in edit / create mode, show unsaved changes modal
+  const editableTaskcard = document.querySelector('.taskcard-editable-identifier');
+  if (editableTaskcard) {
+    openUnsavedChangesModal(createTask);
+    return;
+  }
+
   // create a new task card
   const createTaskcardContainer = createEditableTaskCard({
     title: '',
@@ -459,6 +467,7 @@ const addTaskCard = () => {
   actionWrapper.classList.add('taskcard-actions');
   actionWrapper.innerHTML = `
     <button class="typography-button button-outline-danger button-sm"
+        id="button-editable-cancel"
         onclick="cancelCreateTask()">
       Cancel
     </button>
@@ -533,6 +542,15 @@ const createTask = async () => {
 }
 
 const confirmDeleteTask = (id, title) => {
+  // if there is another task in edit / create mode, show unsaved changes modal
+  const editableTaskcard = document.querySelector('.taskcard-editable-identifier');
+  if (editableTaskcard) {
+    openUnsavedChangesModal(() => {
+      confirmDeleteTask(id, title);
+    });
+    return;
+  }
+
   // open delete confirmation modal
   const modalBackdrop = document.getElementById('modal-delete') 
   modalBackdrop.style.visibility = 'visible';
@@ -575,6 +593,15 @@ const deleteTask = async (id) => {
 }
 
 const editTaskCard = (id, title, description, date, status) => {
+  // if there is another task in edit / create mode, show unsaved changes modal
+  const editableTaskcard = document.querySelector('.taskcard-editable-identifier');
+  if (editableTaskcard) {
+    openUnsavedChangesModal(() => {
+      editTaskCard(id, title, description, date, status);
+    });
+    return;
+  }
+
   // create an editable task card with the given data
   const editableTaskcardContainer = createEditableTaskCard({
     title, description, due_date: date, status
@@ -583,6 +610,7 @@ const editTaskCard = (id, title, description, date, status) => {
   actionWrapper.classList.add('taskcard-actions');
   actionWrapper.innerHTML = `
     <button class="typography-button button-outline-danger button-sm"
+        id="button-editable-cancel"
         onclick="cancelEditTask(${id}, '${title}', '${description}', '${date}', '${status}')">
       Cancel
     </button>
@@ -644,6 +672,36 @@ const updateTask = async (id) => {
   catch (error) {
     window.alert('Something went wrong. Please try again.');
   }
+}
+
+const openUnsavedChangesModal = (fn) => {
+  // open unsaved changes modal
+  const modalBackdrop = document.getElementById('modal-unsaved-changes');
+  modalBackdrop.style.visibility = 'visible';
+
+  // set the discard button to call the given function
+  const discardButton = document.getElementById('button-discard-changes');
+  discardButton.addEventListener('click', () => {
+    closeUnsavedChangesModal();
+    const cancelButton = document.getElementById('button-editable-cancel');
+    cancelButton.click();
+    fn();
+  });
+}
+
+const backToEditing = () => {
+  // close unsaved changes modal
+  closeUnsavedChangesModal();
+
+  // scroll to the editable task card
+  const editableTaskcard = document.querySelector('.taskcard-editable-identifier');
+  editableTaskcard.scrollIntoView({ behavior: 'smooth' });
+}
+
+const closeUnsavedChangesModal = () => {
+  // close unsaved changes modal
+  const modalBackdrop = document.getElementById('modal-unsaved-changes');
+  modalBackdrop.style.visibility = 'hidden';
 }
 
 const handleLogoClick = () => {

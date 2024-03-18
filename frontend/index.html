@@ -272,5 +272,33 @@
       </div>
     </div>
   </div>
+
+  <div class="modal-backdrop" id="modal-unsaved-changes">
+    <div class="modal-container" id="modal-container">
+      <div class="modal-title typography-title2">
+        You have unsaved changes!
+      </div>
+      <div class="modal-body typography-body">
+        <span>
+          Another task is currently in edit mode.
+          Do you want to discard the changes and continue?
+        </span>
+        <div class="typography-overline">
+          Warning: Your changes will be lost!
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="typography-button button-sm button-outline-danger"
+            id="button-discard-changes">
+          Discard Changes
+        </button>
+        <button class="typography-button button-sm button-fill-secondary"
+            onclick="backToEditing()">
+          Back to Editing
+        </button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
