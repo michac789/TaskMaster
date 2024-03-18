@@ -26,7 +26,7 @@ class TaskGetAllTestCase(SampleDataMixin, unittest.TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json), 4)
-        self.assertEqual(response.json[0], {
+        self.assertEqual(response.json[3], {
             'id': 1,
             'title': 'task1',
             'description': 'task1 description',
@@ -34,6 +34,9 @@ class TaskGetAllTestCase(SampleDataMixin, unittest.TestCase):
             'creator': 'user1',
             'due_date': '2024-03-15',
         })
+        self.assertEqual(response.json[2]['id'], 2)
+        self.assertEqual(response.json[1]['id'], 3)
+        self.assertEqual(response.json[0]['id'], 4)
         response2 = self.client.get(
             '/tasks',
             headers={'Authorization': self.token2},

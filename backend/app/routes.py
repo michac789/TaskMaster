@@ -1,4 +1,5 @@
 from flask import request, current_app as app
+from sqlalchemy import desc
 
 from app.models import db, Task, User
 from app.utils import auth_required
@@ -97,14 +98,14 @@ def change_password(user):
 
 
 '''
-    Get all tasks for the current user.
+    Get all tasks for the current user, ordered by id in descending order.
     Return 401 if the user is not authenticated.
     Return 200 and list of tasks created by the current user.
 '''
 @app.route('/tasks', methods=['GET'])
 @auth_required
 def get_all_tasks(user):
-    tasks = Task.query.filter_by(user_id=user.id).all()
+    tasks = Task.query.filter(Task.user_id == user.id).order_by(desc(Task.id)).all()
     return [task.serialize() for task in tasks], 200
 
 
