@@ -346,40 +346,58 @@ const changePassword = async () => {
   }
 }
 
+const sanitizeInput = (input) => {
+  const map = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#x27;',
+      "/": '&#x2F;',
+  };
+  const reg = /[&<>"'/]/ig;
+  return input.replace(reg, (match)=>(map[match]));
+}
+
 /**
  * Utility function to create read mode task card
  * @param {Object} task - task object with id, title, description, due_date, status
  * @returns {HTMLElement} - the task card div element
  */
 const createReadableTaskCard = (task) => {
+  const title = sanitizeInput(task.title);
+  const description = sanitizeInput(task.description);
+  const dueDate = sanitizeInput(task.due_date);
+  const status = sanitizeInput(task.status);
+
   const taskcardContainer = document.createElement('div');
   taskcardContainer.classList.add('taskcard-container');
   taskcardContainer.id = `taskcard-${task.id}`;
   taskcardContainer.innerHTML = `
     <div class="taskcard-header">
       <div class="typography-title2">
-        ${task.title}
+        ${title}
       </div>
       <div class="typography-subtitle taskcard-badge
-        ${task.status === 'Completed' ? 'bg-success' :
-        task.status === 'In Progress' ? 'bg-primary' : 'bg-warning'}
+        ${status === 'Completed' ? 'bg-success' :
+        status === 'In Progress' ? 'bg-primary' : 'bg-warning'}
       ">
-        ${task.status.toUpperCase()}
+        ${status.toUpperCase()}
       </div>
     </div>
     <div class="typography-overline">
-      Due date: ${task.due_date}
+      Due date: ${dueDate}
     </div>
     <div class="typography-body">
-      ${task.description}
+      ${description}
     </div>
     <div class="taskcard-actions">
       <button class="typography-button button-outline-danger button-sm"
-          onclick="confirmDeleteTask(${task.id}, '${task.title}')">
+          onclick="confirmDeleteTask(${task.id}, '${title}')">
         Delete
       </button>
       <button class="typography-button button-fill-primary button-sm"
-          onclick="editTaskCard(${task.id}, '${task.title}', '${task.description}', '${task.due_date}', '${task.status}')">
+          onclick="editTaskCard(${task.id}, '${title}', '${description}', '${dueDate}', '${status}')">
         Edit
       </button>
     </div>
@@ -392,14 +410,14 @@ const createReadableTaskCard = (task) => {
  * @param {Object} task - task object with id, title, description, due_date, status
  * @returns {HTMLElement} - the task card div element
  */
-const createEditableTaskCard = (task, divId) => {
+const createEditableTaskCard = (task, divId, title) => {
   const taskcardContainer = document.createElement('div');
   taskcardContainer.classList.add('taskcard-container');
   taskcardContainer.classList.add('taskcard-editable-identifier')
   taskcardContainer.id = divId;
   taskcardContainer.innerHTML = `
     <div class="typography-title2">
-      Creating New Task...
+      ${title}
     </div>
     <input id="input-title" class="input-standard typography-body"
       type="text" placeholder="Enter title" value="${task.title}" />
@@ -462,7 +480,7 @@ const addTaskCard = () => {
     description: '',
     due_date: '',
     status: 'To Do'
-  }, 'taskcard-create');
+  }, 'taskcard-create', 'Creating New Task...');
   const actionWrapper = document.createElement('div');
   actionWrapper.classList.add('taskcard-actions');
   actionWrapper.innerHTML = `
@@ -593,6 +611,12 @@ const deleteTask = async (id) => {
 }
 
 const editTaskCard = (id, title, description, date, status) => {
+  // sanitize input values
+  const sanitizedTitle = sanitizeInput(title);
+  const sanitizedDescription = sanitizeInput(description);
+  const sanitizedDate = sanitizeInput(date);
+  const sanitizedStatus = sanitizeInput(status);
+
   // if there is another task in edit / create mode, show unsaved changes modal
   const editableTaskcard = document.querySelector('.taskcard-editable-identifier');
   if (editableTaskcard) {
@@ -604,14 +628,14 @@ const editTaskCard = (id, title, description, date, status) => {
 
   // create an editable task card with the given data
   const editableTaskcardContainer = createEditableTaskCard({
-    title, description, due_date: date, status
-  }, `taskcard-edit-${id}`);
+    title, sanitizedDescription, due_date: sanitizedDate, sanitizedStatus
+  }, `taskcard-edit-${id}`, 'Edit Task');
   const actionWrapper = document.createElement('div');
   actionWrapper.classList.add('taskcard-actions');
   actionWrapper.innerHTML = `
     <button class="typography-button button-outline-danger button-sm"
         id="button-editable-cancel"
-        onclick="cancelEditTask(${id}, '${title}', '${description}', '${date}', '${status}')">
+        onclick="cancelEditTask(${id}, '${sanitizedTitle}', '${sanitizedDescription}', '${sanitizedDate}', '${sanitizedStatus}')">
       Cancel
     </button>
     <button class="typography-button button-fill-primary button-sm"
