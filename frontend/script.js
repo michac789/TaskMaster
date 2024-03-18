@@ -369,6 +369,7 @@ const createReadableTaskCard = (task) => {
   const description = sanitizeInput(task.description);
   const dueDate = sanitizeInput(task.due_date);
   const status = sanitizeInput(task.status);
+  const dayDiff = Math.floor((new Date(dueDate) - new Date()) / (1000 * 60 * 60 * 24)) + 1;
 
   const taskcardContainer = document.createElement('div');
   taskcardContainer.classList.add('taskcard-container');
@@ -387,6 +388,10 @@ const createReadableTaskCard = (task) => {
     </div>
     <div class="typography-overline">
       Due date: ${dueDate}
+      ${dayDiff < 0 ? '<span style="color: #db4634;">(Overdue)</span>' : ''}
+      ${dayDiff === 0 ? '<span style="color: #c5802e;">(Due today)</span>' : ''}
+      ${dayDiff === 1 ? '<span style="color: #c5802e;">(Due tomorrow)</span>' : ''}
+      ${dayDiff <= 7 && dayDiff >= 2 ? `<span style="color: #c5802e;">(Due in ${dayDiff} days)</span>` : ''}
     </div>
     <div class="typography-body">
       ${description}
@@ -611,12 +616,6 @@ const deleteTask = async (id) => {
 }
 
 const editTaskCard = (id, title, description, date, status) => {
-  // sanitize input values
-  const sanitizedTitle = sanitizeInput(title);
-  const sanitizedDescription = sanitizeInput(description);
-  const sanitizedDate = sanitizeInput(date);
-  const sanitizedStatus = sanitizeInput(status);
-
   // if there is another task in edit / create mode, show unsaved changes modal
   const editableTaskcard = document.querySelector('.taskcard-editable-identifier');
   if (editableTaskcard) {
@@ -628,14 +627,14 @@ const editTaskCard = (id, title, description, date, status) => {
 
   // create an editable task card with the given data
   const editableTaskcardContainer = createEditableTaskCard({
-    title, sanitizedDescription, due_date: sanitizedDate, sanitizedStatus
+    title, description, due_date: date, status
   }, `taskcard-edit-${id}`, 'Edit Task');
   const actionWrapper = document.createElement('div');
   actionWrapper.classList.add('taskcard-actions');
   actionWrapper.innerHTML = `
     <button class="typography-button button-outline-danger button-sm"
         id="button-editable-cancel"
-        onclick="cancelEditTask(${id}, '${sanitizedTitle}', '${sanitizedDescription}', '${sanitizedDate}', '${sanitizedStatus}')">
+        onclick="cancelEditTask(${id}, '${title}', '${description}', '${date}', '${status}')">
       Cancel
     </button>
     <button class="typography-button button-fill-primary button-sm"
