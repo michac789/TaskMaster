@@ -89,7 +89,7 @@ Note: if you have made changes to the Dockerfile, please rebuild the images by a
 
 3. The backend server should be running on localhost:8000
 
-TODO - frontend server? or just static files?
+The frontend is just a static website, you can simply open `frontend/index.html` in your browser to view the frontend. In order to fetch from development backend, you can change the `ROOT_ENDPOINT` in `frontend/script.js` to `http://localhost:8000`. No hot-reloading is implemented for the frontend, so you have to refresh the page manually after making changes.
 
 ### Backend Useful Commands
 
