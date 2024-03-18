@@ -233,7 +233,7 @@ const handleLogin = async () => {
       errorDiv.innerText = `Error: ${error}`;
     }
   } catch (error) {
-    console.error('Error logging in:', error); // TODO - handle error
+    window.alert('Something went wrong. Please try again.');
   }
 }
 
@@ -272,7 +272,7 @@ const handleRegister = async () => {
     }
   }
   catch (error) {
-    console.error('Error registering user:', error); // TODO - handle error
+    window.alert('Something went wrong. Please try again.');
   }
 }
 
@@ -420,6 +420,7 @@ const createEditableTaskCard = (task, divId) => {
         </select>
       </div>
     </div>
+    <div class="typography-error" id="task-editable-error"></div>
   `;
   return taskcardContainer;
 }
@@ -442,7 +443,7 @@ const getTasks = async () => {
       taskcardsContainer.appendChild(taskcardContainer);
     })
   } catch (error) {
-    console.error('Error fetching tasks:', error); // TODO - handle error
+    window.alert('Something went wrong. Please try again.');
   }
 }
 
@@ -511,20 +512,23 @@ const createTask = async () => {
       body: JSON.stringify(data)
     });
     const responseData = await response.json();
-    data['id'] = responseData['id'];
 
+    // display error message if unsuccessful
+    if (response.status !== 201) {
+      const errorDiv = document.getElementById('task-editable-error');
+      errorDiv.innerText = `Error: ${responseData['error']}`
+      return;
+    }
+    
     // append the new task card to the task cards container
+    data['id'] = responseData['id'];
     const taskcardsContainer = document.getElementById('taskcards-container');
     const taskcardContainer = createReadableTaskCard(data);
     taskcardsContainer.appendChild(taskcardContainer);
-    // TODO - handle date format conversion!
-    // TODO - handle order of tasks! (try to make new one appear on top)
-
-    // remove the create task card and make the 'Add Task' button reappear
     cancelCreateTask();
   }
   catch (error) {
-    console.error('Error creating task:', error); // TODO - handle error
+    window.alert('Something went wrong. Please try again.');
   }
 }
 
@@ -566,7 +570,7 @@ const deleteTask = async (id) => {
     cancelDeleteTask();
   }
   catch (error) {
-    console.error('Error deleting task:', error); // TODO - handle error
+    window.alert('Something went wrong. Please try again.');
   }
 }
 
@@ -624,7 +628,13 @@ const updateTask = async (id) => {
       body: JSON.stringify(data)
     });
     const responseData = await response.json();
-    console.log('Updated task:', responseData);
+
+    // display error message if unsuccessful
+    if (response.status !== 200) {
+      const errorDiv = document.getElementById('task-editable-error');
+      errorDiv.innerText = `Error: ${responseData['error']}`
+      return;
+    }
 
     // replace the editable task card with the read mode task card
     const taskcardContainer = document.getElementById(`taskcard-edit-${id}`);
@@ -632,7 +642,7 @@ const updateTask = async (id) => {
     taskcardContainer.replaceWith(taskcard);
   }
   catch (error) {
-    console.error('Error updating task:', error); // TODO - handle error
+    window.alert('Something went wrong. Please try again.');
   }
 }
 

@@ -39,7 +39,7 @@ Design a SQLite database schema to store tasks.
 
 - [x] Implement validation on the backend side to ensure that required fields are provided when adding or updating tasks
 - [x] Validate input formats (e.g., date format)
-- [ ] Handle error gracefully and provide appropriate error messages to the user
+- [x] Handle error gracefully and provide appropriate error messages to the user
 
 ### Authentication (Optional)
 
