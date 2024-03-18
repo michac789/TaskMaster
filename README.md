@@ -6,6 +6,7 @@
 - [Project Overview](#project-overview)
 - [Development Environment](#development-environment)
 - [Production Environment](#project-structure)
+- [Future Improvements](#future-improvements)
 
 ## Project Requirements
 
@@ -54,11 +55,21 @@ Design a SQLite database schema to store tasks.
 ### Deployment (Optional)
 
 - [x] Deploy the application to a hosting platform
-- [ ] Make sure the application is accessible online and functions correctly in a production environment
+- [x] Make sure the application is accessible online and functions correctly in a production environment
 
 ## Project Overview
 
-TODO
+### Backend
+
+The backend is built using `Flask`, which is a light weight web framework for Python. `Flask-SQLAlchemy` is used as the ORM to interact with the database, and `Flask-Migrate` is used to handle database migrations. Additionally, `Flask-Cors` is used to handle CORS, and `PyJwt` is used to handle JWT authentication. There are 48 unit tests written using `pytest` and a mock test db to ensure that the backend behaves as expected, with complete validation and error handling.
+
+### Frontend
+
+As per the requirements, the frontend is built using HTML, Vanilla CSS, and Vanila JavaScript, without the use of any frontend frameworks or libraries. The frontend is essentially a single page application. Users should be able to perform authentication related operations such as login, register, logout, and change password. Authenticated users should be able to perform CRUD operations on tasks. The frontend is designed to be user-friendly, responsive, and has complete validation and error handling.
+
+### DevOps
+
+This project is deployed for production. You can access the frontend [here](https://taskmaster.michac789.com/) and the backend [here](https://backend.taskmaster.michac789.com/). More information about the deployment can be found in the [Production Environment](#production-environment) section.
 
 ## Development Environment
 
@@ -114,22 +125,79 @@ Refer to [Flask-Migrate](https://flask-migrate.readthedocs.io/en/latest/) for fu
 
 ## Production Environment
 
-### Environment Variables
+### Production Setup
 
-TODO
+A separate `Dockerfile.prod` file is used to build the production Docker image. Here are a few things that are different in production environment compared to development environment:
+- Usage of Gunicorn, a proper WSGI server, with 2 workers
+- Environment variables for configuration and to store sensitive information, such as secret key used for JWT authentication, Database URI, setting debug to False, etc.
+- Usage of PostgreSQL database instead of SQLite, which is hosted in a DigitalOcean droplet
 
-### WSGI Server
+### How to Deploy
 
-TODO
+Both the backend and frontend applicatino are deployed from Digital Ocean Droplet. Generally, the steps are as follows:
 
-### Production Database
+1. Buy a domain name from a domain registrar, point the 'A' record (ipv4) to the droplet's IP address
 
-TODO
+2. Create Digital Ocean droplet, SSH into the droplet, install Docker
 
-### Deployment
+3. Build the production Docker image and push it to Docker Hub
 
-TODO
+4. SSH into the droplet, pull the production Docker image from Docker Hub, and run the container
+
+5. Install and configure Caddy, a web server, to handle reverse proxy mapping from domain name to the specific ports, it also provides SSL certificates
+
+6. As the frontend are static files, simply copy the files to the droplet (e.g., using scp) and serve them using Caddy
 
 ### CI/CD Pipeline
 
-TODO
+In order to automate the deployment process, a CI/CD pipeline is set up using GitHub Actions. Refer to `test.yml` and `deploy.yml` in `.github/workflows` for the complete details. There are 4 workflows summarized as follows:
+
+1. Run all backend unit test cases
+
+2. Build the backend production Docker image and push it to Docker Hub
+
+3. SSH into the droplet, pull the production Docker image from Docker Hub, and run the container
+
+4. Use scp to copy the frontend static files to the droplet
+
+*Note: Caddy has to be installed and configured manually beforehand, to listen to the domain name and handle reverse proxy mapping
+
+## Future Improvements
+
+Though the requirements are fulfilled, there are certainly many areas of improvements. Here are some ideas: (wish I had more free time to implement these!)
+
+1. Authentication
+
+- Usage of refresh and access tokens are more secure, rather than using only an access token
+
+- Possibly create a new field `email` in the `User` model, in case the user forgot their password, they can reset it using their email (might need to configure email service queue)
+
+- Check for password strength, which currently only relies on minimum length of 8, which is not secure
+
+- Check for username uniqueness every few moments after the user stop typing (debouncing), rather than having to click the submit button to check for username uniqueness
+
+- Password input eye icon to show/hide password
+
+- Other UI improvements, such as showing loading state (e.g., spinner or shimmering rectangle) when waiting for the server to respond, make each input red when there is an error, fade in animation for modal, exit modal when backdrop is clicked, etc.
+
+2. Task Management
+
+- Features like searching, sorting, filtering, and pagination, are not yet implemented; the implementation can be as basic as using the `LIKE` operator in SQL for searching, or more advanced like using a search engine like Elasticsearch, or using database indexing / caching to speed up some queries
+
+- Implementation of pagination or infinite scrolling in the frontend, to handle users with many tasks
+
+- Dismissable success alerts when saving or deleting is successful, rather than just showing the tasks
+
+- Some client side validation (whenever possible) to reduce the number of requests to the server, so the server won't be overloaded; currently most validation relies on the backend, which return an error messsage and shown to the user
+
+- Extra features such as setting priority or tags, notification (might need queue service and cron job), exporting tasks to a file, etc.
+
+- Accessibility improvements such as keyboard navigation, screen reader support, etc. (some are implemented in login/register page, but not in the task management page yet)
+
+3. DevOps
+
+- Use Docker Swarm or Kubernetes to handle the deployment, can ensure zero downtime and better scaling; currently, there is a downtime when the server is being updated as the container is stopped and removed before the new container is started
+
+- Usage of Docker secrets to store sensitive information, the current way is actually not so secure as people can inspect the image on Docker Hub and see the environment variables
+
+- Backend using tools like Sentry to monitor errors, and Prometheus to monitor performance, Swagger for API documentation, etc.
