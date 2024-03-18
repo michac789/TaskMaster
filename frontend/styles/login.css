@@ -18,6 +18,11 @@
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(4px);
+
+    @media (max-width: 768px) {
+        padding: 16px;
+        gap: 6px;
+    }
 }
 
 .login-inputs {
@@ -26,6 +31,10 @@
     gap: 8px;
     margin-top: 8px;
     width: 100%;
+
+    @media (max-width: 768px) {
+        gap: 6px;
+    }
 }
 
 .login-button {
@@ -33,4 +42,8 @@
     width: 100%;
     display: flex;
     justify-content: center;
+
+    @media (max-width: 768px) {
+        margin-top: 6px;
+    }
 }

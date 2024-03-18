@@ -93,14 +93,38 @@
     border-radius: 4px;
     padding: 4px 12px;
     width: 80px;
+
+    @media (max-width: 768px) {
+        width: 70px;
+        padding: 4px 8px;
+    }
+}
+.button-sm-long {
+    border-radius: 4px;
+    padding: 4px 12px;
+    width: 160px;
+
+    @media (max-width: 768px) {
+        width: 140px;
+        padding: 4px 8px;
+    }
 }
 .button-fw {
     border-radius: 4px;
     padding: 4px 12px;
     width: 100%;
+
+    @media (max-width: 768px) {
+        padding: 4px 8px;
+    }
 }
 .button-lg {
     border-radius: 4px;
     padding: 8px 16px;
     width: 160px;
+
+    @media (max-width: 768px) {
+        width: 140px;
+        padding: 6px 12px;
+    }
 }
