@@ -6,6 +6,25 @@ const LOGIN_ENDPOINT = `${ROOT_ENDPOINT}/login`;
 const REGISTER_ENDPOINT = `${ROOT_ENDPOINT}/users`;
 const PROFILE_ENDPOINT = `${ROOT_ENDPOINT}/me`;
 
+const getProfile = async () => {
+  try {
+    // call api to get user profile
+    const response = await fetch(PROFILE_ENDPOINT, {
+      method: 'GET',
+      headers: {
+        'Authorization': localStorage.getItem('jwtToken')
+      }
+    });
+    const data = await response.json();
+    if (response.status === 200) {
+      return data;
+    }
+    return null;
+  } catch (error) {
+    return null;
+  }
+}
+
 const handleProfileClick = async () => {
   // get the user's profile data
   const data = await getProfile();

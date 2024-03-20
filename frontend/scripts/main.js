@@ -1,10 +1,11 @@
 /**
- * Main js file, contains single page application page change logic
+ * Main js file, contains single page application navigation logic
  */
 const ROOT_ENDPOINT = 'https://taskmasterbackend.michac789.com';
 
 document.addEventListener('DOMContentLoaded', () => {
-  handlePageChange('tasks');
+  const INITIAL_PAGE = 'tasks';
+  handlePageChange(INITIAL_PAGE);
 });
 
 const handlePageChange = async (pageName) => {
@@ -19,68 +20,25 @@ const handlePageChange = async (pageName) => {
   registerPage.style.display = 'none';
   aboutPage.style.display = 'none';
   kanbanPage.style.display = 'none';
-  const token = localStorage.getItem('jwtToken');
 
   switch (pageName) {
     case 'tasks':
-      // if no token or invalid token, redirect to login page
-      if (token) {
-        const { username } = await getProfile();
-        if (username) {
-          resetTaskPage(username);
-          tasksPage.style.display = 'block';
-          getTasks();
-        } else {
-          handlePageChange('login');
-        }
-      } else {
-        handlePageChange('login');
-      }
+      setActiveMenu('tasks');
+      loginRequired(() => navigateTasksPage(tasksPage));
       break;
     case 'login':
-      loginPage.style.display = 'block';
-      resetLoginPage();
+      navigateLoginPage(loginPage);
       break;
     case 'register':
-      registerPage.style.display = 'block';
-      resetRegisterPage();
+      navigateRegisterPage(registerPage);
       break;
     case 'about':
-      aboutPage.style.display = 'block';
-      resetAboutPage();
+      setActiveMenu('about');
+      navigateAboutPage(aboutPage);
       break;
     case 'kanban':
-      if (token) {
-        const { username } = await getProfile();
-        if (username) {
-          resetKanbanPage(username);
-          kanbanPage.style.display = 'block';
-        } else {
-          handlePageChange('login');
-        }
-      } else {
-        handlePageChange('login');
-      }
-      break;
-  }
-}
-
-const getProfile = async () => {
-  try {
-    // call api to get user profile
-    const response = await fetch(PROFILE_ENDPOINT, {
-      method: 'GET',
-      headers: {
-        'Authorization': localStorage.getItem('jwtToken')
-      }
-    });
-    const data = await response.json();
-    if (response.status === 200) {
-      return data;
-    }
-    return null;
-  } catch (error) {
-    return null;
+      setActiveMenu('kanban');
+      loginRequired(() => navigateKanbanPage(kanbanPage));
   }
 }
 
@@ -108,23 +66,54 @@ const setActiveMenu = (menu) => {
   }
 }
 
-const resetTaskPage = (username) => {
+/**
+ * Wrapper function to check if user is logged in
+ * If not, redirect to login page
+ * If yes, call the given function fn
+ * @param {function} fn (callback function)  
+ }} fn 
+ */
+const loginRequired = async (fn) => {
+  const token = localStorage.getItem('jwtToken');
+  if (!token) {
+    // if no token, redirect to login page
+    handlePageChange('login');
+  } else {
+    const { username } = await getProfile();
+    if (username) {
+      // token is valid, set username in navbar and call fn
+      const usernameDiv = document.getElementById('navbar-username');
+      usernameDiv.classList.remove('text-gray');
+      usernameDiv.innerText = username;
+      fn();
+    } else {
+      // if token is invalid / expired, redirect to login page
+      handlePageChange('login');
+    }
+  }
+}
+
+const navigateTasksPage = (page) => {
+  // render the tasks page, call getTasks to fetch all tasks
+  page.style.display = 'block';
+  getTasks();
+
   // clear all task cards, leaving only the 'Add Task' button
   const taskcardsContainer = document.getElementById('taskcards-container');
   while (taskcardsContainer.children.length > 1) {
     taskcardsContainer.removeChild(taskcardsContainer.lastChild);
   }
-
-  // handle navbar option change
-  setActiveMenu('tasks');
-
-  // show username in the navbar
-  const usernameDiv = document.getElementById('navbar-username');
-  usernameDiv.classList.remove('text-gray');
-  usernameDiv.innerText = username;
 }
 
-const resetLoginPage = () => {
+const navigateLoginPage = (page) => {
+  // change username in navbar to 'Not Logged In'
+  const usernameDiv = document.getElementById('navbar-username');
+  usernameDiv.classList.add('text-gray');
+  usernameDiv.innerText = 'Not Logged In';
+
+  // render the login page
+  page.style.display = 'block';
+
   // auto-focus on the username input field
   const usernameInput = document.getElementById('login-username');
   usernameInput.focus();
@@ -144,14 +133,11 @@ const resetLoginPage = () => {
       }
     }
   });
-
-  // username in navbar changed to 'Not Logged In'
-  const usernameDiv = document.getElementById('navbar-username');
-  usernameDiv.classList.add('text-gray');
-  usernameDiv.innerText = 'Not Logged In';
 }
 
-const resetRegisterPage = () => {
+const navigateRegisterPage = (page) => {
+  page.style.display = 'block';
+
   // auto-focus on the username input field
   const usernameInput = document.getElementById('register-username');
   usernameInput.focus();
@@ -173,12 +159,10 @@ const resetRegisterPage = () => {
   });
 }
 
-const resetAboutPage = () => {
-  // handle navbar option change
-  setActiveMenu('about');
+const navigateAboutPage = (page) => {
+  page.style.display = 'block';
 }
 
-const resetKanbanPage = (username) => {
-  // handle navbar option change
-  setActiveMenu('kanban');
+const navigateKanbanPage = (page) => {
+  page.style.display = 'block';
 }
