@@ -2,6 +2,10 @@
  * Main js file, contains single page application navigation logic
  */
 const ROOT_ENDPOINT = 'https://taskmasterbackend.michac789.com';
+const LOGIN_ENDPOINT = `${ROOT_ENDPOINT}/login`;
+const REGISTER_ENDPOINT = `${ROOT_ENDPOINT}/users`;
+const PROFILE_ENDPOINT = `${ROOT_ENDPOINT}/me`;
+const TASKS_ENDPOINT = `${ROOT_ENDPOINT}/tasks`;
 
 document.addEventListener('DOMContentLoaded', () => {
   const INITIAL_PAGE = 'kanban'; // TODO - temporary
@@ -164,6 +168,6 @@ const navigateAboutPage = (page) => {
 }
 
 const navigateKanbanPage = (page) => {
-  page.style.display = 'block';
+  page.style.display = 'flex';
   kanbanTrial();
 }

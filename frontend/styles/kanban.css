@@ -2,8 +2,10 @@
 .kanban-container {
     display: flex;
     flex-direction: row;
-    gap: 16px;
-    margin: 16px;
+    padding: 16px;
+    gap: 8px;
+    height: calc(100vh - 50px);
+    box-sizing: border-box;
 }
 
 .kanban-column {
@@ -11,17 +13,17 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
 
+    gap: 8px;
+    padding: 8px;
+    height: 100%;
+    box-sizing: border-box;
     border: 1px solid black;
-    padding: 16px;
+    overflow-y: auto;
 }
 
 .kanban-item {
     background-color: red;
     cursor: pointer;
-    position: absolute;
-
-    height: 100px;
-    width: 200px;
+    width: calc((100vw - 126px) / 3);
 }
