@@ -1,7 +1,6 @@
 /**
  * All js functions related to 'My Tasks' page
  */
-const TASKS_ENDPOINT = `${ROOT_ENDPOINT}/tasks`;
 
 const sanitizeInput = (input) => {
   const map = {

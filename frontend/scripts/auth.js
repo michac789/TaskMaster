@@ -2,9 +2,6 @@
  * All js functions related to authentication,
  * such as login/register/logout/see profile/forgot password
  */
-const LOGIN_ENDPOINT = `${ROOT_ENDPOINT}/login`;
-const REGISTER_ENDPOINT = `${ROOT_ENDPOINT}/users`;
-const PROFILE_ENDPOINT = `${ROOT_ENDPOINT}/me`;
 
 const getProfile = async () => {
   try {
