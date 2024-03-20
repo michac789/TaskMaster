@@ -1,0 +1,27 @@
+
+.kanban-container {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    margin: 16px;
+}
+
+.kanban-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+
+    border: 1px solid black;
+    padding: 16px;
+}
+
+.kanban-item {
+    background-color: red;
+    cursor: pointer;
+    position: absolute;
+
+    height: 100px;
+    width: 200px;
+}

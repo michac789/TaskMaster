@@ -4,7 +4,7 @@
 const ROOT_ENDPOINT = 'https://taskmasterbackend.michac789.com';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const INITIAL_PAGE = 'tasks';
+  const INITIAL_PAGE = 'kanban'; // TODO - temporary
   handlePageChange(INITIAL_PAGE);
 });
 
@@ -165,4 +165,5 @@ const navigateAboutPage = (page) => {
 
 const navigateKanbanPage = (page) => {
   page.style.display = 'block';
+  kanbanTrial();
 }
