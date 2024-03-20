@@ -12,14 +12,18 @@ const handlePageChange = async (pageName) => {
   const loginPage = document.getElementById('page-login');
   const registerPage = document.getElementById('page-register');
   const aboutPage = document.getElementById('page-about');
+  const kanbanPage = document.getElementById('page-kanban');
+
   tasksPage.style.display = 'none';
   loginPage.style.display = 'none';
   registerPage.style.display = 'none';
   aboutPage.style.display = 'none';
+  kanbanPage.style.display = 'none';
+  const token = localStorage.getItem('jwtToken');
+
   switch (pageName) {
     case 'tasks':
       // if no token or invalid token, redirect to login page
-      const token = localStorage.getItem('jwtToken');
       if (token) {
         const { username } = await getProfile();
         if (username) {
@@ -45,6 +49,19 @@ const handlePageChange = async (pageName) => {
       aboutPage.style.display = 'block';
       resetAboutPage();
       break;
+    case 'kanban':
+      if (token) {
+        const { username } = await getProfile();
+        if (username) {
+          resetKanbanPage(username);
+          kanbanPage.style.display = 'block';
+        } else {
+          handlePageChange('login');
+        }
+      } else {
+        handlePageChange('login');
+      }
+      break;
   }
 }
 
@@ -67,6 +84,30 @@ const getProfile = async () => {
   }
 }
 
+/**
+ * Set the active menu in the navbar based on the given menu name
+ * @param {string} menu (tasks, kanban, about)
+ */
+const setActiveMenu = (menu) => {
+  const navbarOptionTasks = document.getElementById('navbar-option-tasks');
+  const navbarOptionKanban = document.getElementById('navbar-option-kanban');
+  const navbarOptionAbout = document.getElementById('navbar-option-about');
+  navbarOptionTasks.classList.remove('navbar-selected');
+  navbarOptionKanban.classList.remove('navbar-selected');
+  navbarOptionAbout.classList.remove('navbar-selected');
+  switch (menu) {
+    case 'tasks':
+      navbarOptionTasks.classList.add('navbar-selected');
+      break;
+    case 'kanban':
+      navbarOptionKanban.classList.add('navbar-selected');
+      break;
+    case 'about':
+      navbarOptionAbout.classList.add('navbar-selected');
+      break;
+  }
+}
+
 const resetTaskPage = (username) => {
   // clear all task cards, leaving only the 'Add Task' button
   const taskcardsContainer = document.getElementById('taskcards-container');
@@ -75,10 +116,7 @@ const resetTaskPage = (username) => {
   }
 
   // handle navbar option change
-  const navbarOptionTasks = document.getElementById('navbar-option-tasks');
-  const navbarOptionAbout = document.getElementById('navbar-option-about');
-  navbarOptionTasks.classList.add('navbar-selected');
-  navbarOptionAbout.classList.remove('navbar-selected');
+  setActiveMenu('tasks');
 
   // show username in the navbar
   const usernameDiv = document.getElementById('navbar-username');
@@ -106,12 +144,6 @@ const resetLoginPage = () => {
       }
     }
   });
-
-  // handle navbar option change
-  const navbarOptionTasks = document.getElementById('navbar-option-tasks');
-  const navbarOptionAbout = document.getElementById('navbar-option-about');
-  navbarOptionTasks.classList.add('navbar-selected');
-  navbarOptionAbout.classList.remove('navbar-selected');
 
   // username in navbar changed to 'Not Logged In'
   const usernameDiv = document.getElementById('navbar-username');
@@ -143,8 +175,10 @@ const resetRegisterPage = () => {
 
 const resetAboutPage = () => {
   // handle navbar option change
-  const navbarOptionTasks = document.getElementById('navbar-option-tasks');
-  const navbarOptionAbout = document.getElementById('navbar-option-about');
-  navbarOptionTasks.classList.remove('navbar-selected');
-  navbarOptionAbout.classList.add('navbar-selected');
+  setActiveMenu('about');
+}
+
+const resetKanbanPage = (username) => {
+  // handle navbar option change
+  setActiveMenu('kanban');
 }
