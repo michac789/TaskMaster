@@ -1,4 +1,4 @@
-const ROOT_ENDPOINT = 'https://backend.taskmaster.michac789.com';
+const ROOT_ENDPOINT = 'https://taskmasterbackend.michac789.com';
 const LOGIN_ENDPOINT = `${ROOT_ENDPOINT}/login`;
 const REGISTER_ENDPOINT = `${ROOT_ENDPOINT}/users`;
 const PROFILE_ENDPOINT = `${ROOT_ENDPOINT}/me`;
