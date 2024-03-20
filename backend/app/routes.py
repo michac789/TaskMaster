@@ -106,7 +106,14 @@ def change_password(user):
 @auth_required
 def get_all_tasks(user):
     tasks = Task.query.filter(Task.user_id == user.id).order_by(desc(Task.id)).all()
-    return [task.serialize() for task in tasks], 200
+    format = request.args.get('format', 'default')
+    if format == 'per_status':
+        tasks_per_status = {status: [] for status in Task.STATUS_OPTIONS}
+        for task in tasks:
+            tasks_per_status[task.status].append(task.serialize())
+        return tasks_per_status, 200
+    else:
+        return [task.serialize() for task in tasks], 200
 
 
 '''
