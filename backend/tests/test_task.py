@@ -44,6 +44,32 @@ class TaskGetAllTestCase(SampleDataMixin, unittest.TestCase):
         self.assertEqual(response2.status_code, 200)
         self.assertEqual(len(response2.json), 1)
         
+    def test_task_get_all_success_per_status_1(self):
+        response = self.client.get(
+            '/tasks?format=per_status',
+            headers={'Authorization': self.token1},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json), 3)
+        self.assertEqual(len(response.json['To Do']), 1)
+        self.assertEqual(len(response.json['In Progress']), 2)
+        self.assertEqual(len(response.json['Completed']), 1)
+        self.assertEqual(response.json['To Do'][0]['id'], 3)
+        self.assertEqual(response.json['In Progress'][0]['id'], 4)
+        self.assertEqual(response.json['In Progress'][1]['id'], 1)
+        self.assertEqual(response.json['Completed'][0]['id'], 2)
+        
+    def test_task_get_all_success_per_status_2(self):
+        response = self.client.get(
+            '/tasks?format=per_status',
+            headers={'Authorization': self.token2},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json['To Do']), 1)
+        self.assertEqual(response.json['In Progress'], [])
+        self.assertEqual(response.json['Completed'], [])
+        self.assertEqual(response.json['To Do'][0]['id'], 5)
+        
     def test_task_get_all_failure_1(self):
         # invalid token
         response = self.client.get(
