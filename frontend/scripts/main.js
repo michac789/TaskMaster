@@ -83,12 +83,12 @@ const loginRequired = async (fn) => {
     // if no token, redirect to login page
     handlePageChange('login');
   } else {
-    const { username } = await getProfile();
-    if (username) {
+    const profile = await getProfile();
+    if (profile) {
       // token is valid, set username in navbar and call fn
       const usernameDiv = document.getElementById('navbar-username');
       usernameDiv.classList.remove('text-gray');
-      usernameDiv.innerText = username;
+      usernameDiv.innerText = profile.username;
       fn();
     } else {
       // if token is invalid / expired, redirect to login page
@@ -167,7 +167,7 @@ const navigateAboutPage = (page) => {
   page.style.display = 'block';
 }
 
-const navigateKanbanPage = (page) => {
+const navigateKanbanPage = async (page) => {
   page.style.display = 'flex';
-  kanbanTrial();
+  createKanbanBoard();
 }

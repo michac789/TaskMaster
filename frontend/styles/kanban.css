@@ -19,11 +19,13 @@
     height: 100%;
     box-sizing: border-box;
     border: 1px solid black;
-    overflow-y: auto;
+    overflow-y: scroll;
 }
 
 .kanban-item {
     background-color: red;
     cursor: pointer;
     width: calc((100vw - 126px) / 3);
+
+    transition: all 0.3s ease;
 }

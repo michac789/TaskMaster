@@ -63,6 +63,7 @@ class KanbanItem {
     this.description = description;
     this.dueDate = dueDate;
     this.status = status;
+    this.element = null;
   }
 
   getElement() {
@@ -78,57 +79,75 @@ class KanbanItem {
         <p>${this.description}</p>
       </div>
     `;
+    this.element = kanbanItem;
+    this.createDraggable();
     return kanbanItem;
   }
-}
 
-const kanbanTrial = async () => {
-  const kanbanBoard = new KanbanBoard();
-  await kanbanBoard.init();
-  kanbanBoard.render();
-
-  const kanbanItems = document.querySelectorAll('.kanban-item');
-  kanbanItems.forEach((kanbanItem) => {
-
+  createDraggable() {
+    // make the kanban item draggable
+    const el = this.element;
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-    // if (document.getElementById(elmnt.id + "header")) {
-    //   // if present, the header is where you move the DIV from:
-    //   document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
-    // } else {
-    //   // otherwise, move the DIV from anywhere inside the DIV:
-    //   elmnt.onmousedown = dragMouseDown;
-    // }
-    kanbanItem.onmousedown = dragMouseDown;
-  
+    el.onmousedown = dragMouseDown;
+
     function dragMouseDown(e) {
       e.preventDefault();
-      // get the mouse cursor position at startup:
+      const { left, top, height } = el.getBoundingClientRect();
+
+      // create a temporary div to hold the space
+      const newDiv = document.createElement('div');
+      newDiv.id='kanban-temporary';
+      newDiv.style.minHeight = `${height}px`
+      newDiv.style.width = '100px';
+      newDiv.style.backgroundColor = 'aqua';
+      el.insertAdjacentElement('afterend', newDiv);
+
+      // mouse position at startup
       pos3 = e.clientX;
       pos4 = e.clientY;
+
+      // initial position relative to the viewport
+      const NAVBAR_HEIGHT = 50;
+      el.style.transition = "none";
+      el.style.position = "fixed";
+      el.style.top = top - NAVBAR_HEIGHT + "px";
+      el.style.left = left + "px";
+
       document.onmouseup = closeDragElement;
-      // call a function whenever the cursor moves:
       document.onmousemove = elementDrag;
     }
   
     function elementDrag(e) {
-      console.log('x:', e.clientX, 'y:', e.clientY)
       e.preventDefault();
+
       // calculate the new cursor position:
       pos1 = pos3 - e.clientX;
       pos2 = pos4 - e.clientY;
       pos3 = e.clientX;
       pos4 = e.clientY;
-      // set the element's new position:
-      kanbanItem.style.position = "absolute";
-      kanbanItem.style.top = (kanbanItem.offsetTop - pos2) + "px";
-      kanbanItem.style.left = (kanbanItem.offsetLeft - pos1) + "px";
+      
+      // set the element's new position
+      el.style.position = "fixed";
+      el.style.top = (el.offsetTop - pos2) + "px";
+      el.style.left = (el.offsetLeft - pos1) + "px";
     }
   
     function closeDragElement() {
-      console.log('close drag element')
+      // go back to original position, remove temporary div
+      const kanbanTemporary = document.getElementById('kanban-temporary');
+      el.style.position = "initial";
+      kanbanTemporary.insertAdjacentElement('afterend', el);
+      kanbanTemporary.remove();
+
       // stop moving when mouse button is released:
       document.onmouseup = null;
       document.onmousemove = null;
     }
-  });
+  }
+}
+
+const createKanbanBoard = async () => {
+  const kanbanBoard = new KanbanBoard();
+  await kanbanBoard.init();
+  kanbanBoard.render();
 }
