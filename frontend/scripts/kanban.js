@@ -92,7 +92,8 @@ class KanbanBoard {
     } else if (initialPos === 'right') {
       initialItem = this.rightCol.splice(initialIndex, 1)[0];
     }
-
+    
+    const itemId = initialItem.id;
     if (initialPos === targetPos && initialIndex < targetIndex) {
       targetIndex -= 1;
     }
@@ -104,7 +105,8 @@ class KanbanBoard {
     } else if (targetPos === 'right') {
       this.rightCol.splice(targetIndex, 0, initialItem);
     }
-    this.render();
+
+    this.render(itemId, initialPos, initialIndex);
   }
 
   getGapComponent(pos, index) {
@@ -114,7 +116,7 @@ class KanbanBoard {
     return gap;
   }
 
-  render() {
+  render(itemId=null, initialPos=null, initialIndex=null) {
     this.leftCol.forEach((kanbanItem, index) => {
       kanbanItem.itemIndex = index;
       kanbanItem.itemPos = 'left';
@@ -128,24 +130,56 @@ class KanbanBoard {
       kanbanItem.itemPos = 'right';
     });
 
+    // temporary div to shrink the item that was moved
+    let item = document.getElementById(`kanban-item-${itemId}`);
+    let shrinkDiv = document.createElement('div');
+    if (item) {
+      const itemHeight = item.getBoundingClientRect().height;
+      shrinkDiv.style.height = `${itemHeight}px`;
+      shrinkDiv.style.width = '100%';
+      shrinkDiv.style.transition = 'height 0.3s';
+    }
+
     this.leftColDiv.innerHTML = '';
     this.middleColDiv.innerHTML = '';
     this.rightColDiv.innerHTML = '';
     this.leftColDiv.appendChild(this.getGapComponent('left', 0));
     this.leftCol.forEach((kanbanItem, index) => {
+      if (initialPos === 'left' && initialIndex === index) {
+        this.leftColDiv.appendChild(shrinkDiv);
+      }
       this.leftColDiv.appendChild(kanbanItem.getReadableElement('left', index + 1));
       this.leftColDiv.appendChild(this.getGapComponent('left', index + 1));
     });
     this.middleColDiv.appendChild(this.getGapComponent('middle', 0));
     this.middleCol.forEach((kanbanItem, index) => {
+      if (initialPos === 'middle' && initialIndex === index) {
+        this.middleColDiv.appendChild(shrinkDiv);
+      }
       this.middleColDiv.appendChild(kanbanItem.getReadableElement('middle', index + 1));
       this.middleColDiv.appendChild(this.getGapComponent('middle', index + 1));
     });
     this.rightColDiv.appendChild(this.getGapComponent('right', 0));
     this.rightCol.forEach((kanbanItem, index) => {
+      if (initialPos === 'right' && initialIndex === index) {
+        this.rightColDiv.appendChild(shrinkDiv);
+      }
       this.rightColDiv.appendChild(kanbanItem.getReadableElement('right', index + 1));
       this.rightColDiv.appendChild(this.getGapComponent('right', index + 1));
     });
+
+    // expand & collapse animation for the item that was moved
+    item = document.getElementById(`kanban-item-${itemId}`);
+    if (item) {
+      item.style.maxHeight = '100px';
+      setTimeout(() => {
+        item.style.maxHeight = '1000px';
+        shrinkDiv.style.height = '0px';
+        setTimeout(() => {
+          shrinkDiv.remove();
+        }, 300);
+      }, 10);
+    }
   }
 }
 
