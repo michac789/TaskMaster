@@ -49,6 +49,28 @@ class TaskAPI {
       window.alert('Something went wrong. Please try again later.');
     }
   }
+
+  static async createTask(title, description, dueDate, status) {
+    try {
+      const response = await fetch(`${TASKS_ENDPOINT}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('jwtToken')
+        },
+        body: JSON.stringify({
+          title,
+          description,
+          due_date: dueDate,
+          status
+        })
+      });
+      const data = await response.json();
+      return {data, responseStatus: response.status};
+    } catch {
+      window.alert('Something went wrong. Please try again later.');
+    }
+  }
 }
 
 class KanbanBoard {
@@ -116,6 +138,16 @@ class KanbanBoard {
     return gap;
   }
 
+  getCreateTaskButton(status) {
+    const createTaskButton = document.createElement('button');
+    createTaskButton.classList.add('typography-button', 'button-fill-primary', 'button-sm-long');
+    createTaskButton.id = `create-task-${status}`
+    createTaskButton.innerText = 'Create Task ';
+    createTaskButton.innerHTML += '<i class="ri-add-line"></i>';
+    createTaskButton.onclick = this.handleCreate.bind(this, status);
+    return createTaskButton;
+  }
+
   render(itemId=null, initialPos=null, initialIndex=null) {
     this.leftCol.forEach((kanbanItem, index) => {
       kanbanItem.itemIndex = index;
@@ -143,6 +175,7 @@ class KanbanBoard {
     this.leftColDiv.innerHTML = '';
     this.middleColDiv.innerHTML = '';
     this.rightColDiv.innerHTML = '';
+    this.leftColDiv.appendChild(this.getCreateTaskButton('To Do'));
     this.leftColDiv.appendChild(this.getGapComponent('left', 0));
     this.leftCol.forEach((kanbanItem, index) => {
       if (initialPos === 'left' && initialIndex === index) {
@@ -151,6 +184,7 @@ class KanbanBoard {
       this.leftColDiv.appendChild(kanbanItem.getReadableElement('left', index + 1));
       this.leftColDiv.appendChild(this.getGapComponent('left', index + 1));
     });
+    this.middleColDiv.appendChild(this.getCreateTaskButton('In Progress'));
     this.middleColDiv.appendChild(this.getGapComponent('middle', 0));
     this.middleCol.forEach((kanbanItem, index) => {
       if (initialPos === 'middle' && initialIndex === index) {
@@ -159,6 +193,7 @@ class KanbanBoard {
       this.middleColDiv.appendChild(kanbanItem.getReadableElement('middle', index + 1));
       this.middleColDiv.appendChild(this.getGapComponent('middle', index + 1));
     });
+    this.rightColDiv.appendChild(this.getCreateTaskButton('Completed'));
     this.rightColDiv.appendChild(this.getGapComponent('right', 0));
     this.rightCol.forEach((kanbanItem, index) => {
       if (initialPos === 'right' && initialIndex === index) {
@@ -180,6 +215,76 @@ class KanbanBoard {
         }, 300);
       }, 10);
     }
+  }
+  
+  handleCreate(status) {
+    // alert if edit mode is on
+    if (this.isEditMode) {
+      window.alert('You have unsaved changes. Please save or cancel the changes before performing another action.');
+      return;
+    }
+
+    // render empty task card
+    this.isEditMode = true;
+    const button = document.getElementById(`create-task-${status}`);
+    button.insertAdjacentHTML('beforebegin', `
+      <div class="taskcard-container kanban-item">
+        <div class="typography-title2">
+          New Task (Status: ${status})
+        </div>
+        <input id="input-title" class="input-standard typography-body"
+          type="text" placeholder="Enter title" />
+        <textarea id="input-description" class="input-standard typography-body"
+          type="text" placeholder="Enter description"
+          rows="3"></textarea>
+        <div>
+          <label for="input-duedate" class="typography-body">Due date:</label>
+          <input id="input-duedate" class="input-standard typography-body"
+            type="text" placeholder="Enter due date"
+            onfocus="(this.type='date')" onblur="(this.type='text')" />
+        </div>
+        <div class="typography-error" id="task-editable-error"></div>
+        <div class="taskcard-actions">
+          <button class="typography-button button-outline-danger button-sm
+              cancel-create-button">
+            Cancel
+          </button>
+          <button class="typography-button button-fill-primary button-sm
+              confirm-create-button">
+            Create
+          </button>
+        </div>
+      </div>
+    `);
+    button.style.display = 'none';
+    const cancelCreateButton = document.querySelector('.cancel-create-button');
+    const confirmCreateButton = document.querySelector('.confirm-create-button');
+    cancelCreateButton.addEventListener('click', this.handleCancelCreate.bind(this));
+    confirmCreateButton.addEventListener('click', this.handleConfirmCreate.bind(this, status));
+  }
+
+  handleCancelCreate() {
+    this.isEditMode = false;
+    this.render();
+  }
+
+  async handleConfirmCreate(status) {
+    // get the values from the input fields
+    const title = document.getElementById('input-title').value;
+    const description = document.getElementById('input-description').value;
+    const dueDate = document.getElementById('input-duedate').value;
+
+    // call api to create the task, if error show the error message
+    const {data, responseStatus} = await TaskAPI.createTask(title, description, dueDate, status);
+    if (responseStatus !== 201) {
+      const errorDiv = document.getElementById('task-editable-error');
+      errorDiv.innerHTML = `Error: ${data.error}`;
+      return;
+    }
+
+    // update the task and render the board if successful
+    this.isEditMode = false;
+    this.init();
   }
 }
 
@@ -218,7 +323,7 @@ class KanbanItem {
             delete-button">
           Delete
         </button>
-        <button class="typography-button button-fill-primary button-sm
+        <button class="typography-button button-outline-warning button-sm
             edit-button">
           Edit
         </button>
