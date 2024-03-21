@@ -23,7 +23,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    gap: 8px;
+    cursor: arrow;
 
     @media (max-width: 768px) {
         gap: 4px;

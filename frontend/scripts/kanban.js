@@ -442,6 +442,34 @@ class KanbanItem {
           gap.style.backgroundColor = 'transparent';
         }
       }
+
+      // scroll the kanban columns when dragging near the edges
+      const SCROLL_ZONE = 30;
+      const leftColDiv = document.getElementById('kanban-column-left');
+      const middleColDiv = document.getElementById('kanban-column-middle');
+      const rightColDiv = document.getElementById('kanban-column-right');
+
+      const leftRect = leftColDiv.getBoundingClientRect();
+      const middleRect = middleColDiv.getBoundingClientRect();
+      const rightRect = rightColDiv.getBoundingClientRect();
+      
+      if (cursorY > window.innerHeight - SCROLL_ZONE) {
+        if (cursorX > leftRect.left && cursorX < leftRect.right) {
+          leftColDiv.scrollTop += 10;
+        } else if (cursorX > middleRect.left && cursorX < middleRect.right) {
+          middleColDiv.scrollTop += 10;
+        } else if (cursorX > rightRect.left && cursorX < rightRect.right) {
+          rightColDiv.scrollTop += 10;
+        }
+      } else if (cursorY < 0 + SCROLL_ZONE + 50) { // 50 is the navbar height
+        if (cursorX > leftRect.left && cursorX < leftRect.right) {
+          leftColDiv.scrollTop -= 10;
+        } else if (cursorX > middleRect.left && cursorX < middleRect.right) {
+          middleColDiv.scrollTop -= 10;
+        } else if (cursorX > rightRect.left && cursorX < rightRect.right) {
+          rightColDiv.scrollTop -= 10;
+        }
+      }
     }
   
     function closeDragElement(e) {
