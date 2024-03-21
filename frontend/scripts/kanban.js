@@ -35,6 +35,20 @@ class TaskAPI {
       window.alert('Something went wrong. Please try again later.');
     }
   }
+
+  static async deleteTask(taskId) {
+    try {
+      const response = await fetch(`${TASKS_ENDPOINT}/${taskId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': localStorage.getItem('jwtToken')
+        }
+      });
+      return {data: {}, responseStatus: response.status};
+    } catch {
+      window.alert('Something went wrong. Please try again later.');
+    }
+  }
 }
 
 class KanbanBoard {
@@ -317,6 +331,12 @@ class KanbanItem {
   }
 
   handleEdit() {
+    // if edit mode is on, open unsaved changes modal
+    if (this.board.isEditMode) {
+      window.alert('You have unsaved changes. Please save or cancel the changes before performing another action.');
+      return;
+    }
+    
     this.board.isEditMode = true;
     this.element.innerHTML = `
       <div class="typography-title2">
@@ -381,7 +401,29 @@ class KanbanItem {
   }
 
   handleDelete() {
-    console.log('delete');
+    // if edit mode is on, open unsaved changes modal
+    if (this.board.isEditMode) {
+      window.alert('You have unsaved changes. Please save or cancel the changes before performing another action.');
+      return;
+    }
+
+    // open delete confirmation modal
+    const modalBackdrop = document.getElementById('modal-delete') 
+    modalBackdrop.style.visibility = 'visible';
+
+    // render task title in the modal
+    const deleteTitleSpan = document.getElementById('delete-task-title');
+    deleteTitleSpan.innerText = this.title;
+
+    // set the delete button to delete the task with the given id
+    const deleteButton = document.getElementById('delete-task-button');
+    deleteButton.onclick = this.handlePerformDelete.bind(this);
+  }
+
+  async handlePerformDelete() {
+    await TaskAPI.deleteTask(this.id);
+    this.board.init();
+    cancelDeleteTask();
   }
 }
 
