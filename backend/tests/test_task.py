@@ -28,6 +28,7 @@ class TaskGetAllTestCase(SampleDataMixin, unittest.TestCase):
         self.assertEqual(len(response.json), 4)
         self.assertEqual(response.json[3], {
             'id': 1,
+            'order': 1,
             'title': 'task1',
             'description': 'task1 description',
             'status': 'In Progress',
@@ -69,6 +70,26 @@ class TaskGetAllTestCase(SampleDataMixin, unittest.TestCase):
         self.assertEqual(response.json['In Progress'], [])
         self.assertEqual(response.json['Completed'], [])
         self.assertEqual(response.json['To Do'][0]['id'], 5)
+        
+    def test_task_get_all_success_per_status_3(self):
+        with self.app.app_context():
+            instance = db.session.get(Task, 1)
+            instance.order = 3
+            db.session.commit()
+            instance = db.session.get(Task, 4)
+            instance.order = 2
+            db.session.commit()
+        response = self.client.get(
+            '/tasks?format=per_status',
+            headers={'Authorization': self.token1},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json), 3)
+        self.assertEqual(len(response.json['To Do']), 1)
+        self.assertEqual(len(response.json['In Progress']), 2)
+        self.assertEqual(len(response.json['Completed']), 1)
+        self.assertEqual(response.json['In Progress'][0]['id'], 4)
+        self.assertEqual(response.json['In Progress'][1]['id'], 1)
         
     def test_task_get_all_failure_1(self):
         # invalid token
@@ -355,6 +376,7 @@ class TaskUpdateTestCase(SampleDataMixin, unittest.TestCase):
         self.assertIn('id', response.json)
         self.assertIn('status', response.json)
         self.assertIn('title', response.json)
+        self.assertIn('order', response.json)
         self.assertEqual(response.json['title'], 'task1')
         self.assertEqual(response.json['status'], 'Completed')
         with self.app.app_context():
@@ -449,6 +471,7 @@ class TaskUpdateTestCase(SampleDataMixin, unittest.TestCase):
         )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json, {'error': ['`title` must be at most 50 characters', '`status` is invalid (valid values: To Do, In Progress, Completed)']})
+
 
 class TaskDeleteTestCase(SampleDataMixin, unittest.TestCase):
     def setUp(self):

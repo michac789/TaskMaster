@@ -111,6 +111,8 @@ def get_all_tasks(user):
         tasks_per_status = {status: [] for status in Task.STATUS_OPTIONS}
         for task in tasks:
             tasks_per_status[task.status].append(task.serialize())
+        for status in tasks_per_status:
+            tasks_per_status[status] = sorted(tasks_per_status[status], key=lambda task: task['order'])
         return tasks_per_status, 200
     else:
         return [task.serialize() for task in tasks], 200
