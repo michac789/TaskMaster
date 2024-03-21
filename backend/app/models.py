@@ -83,6 +83,7 @@ class Task(db.Model):
     description = db.Column(db.String(300), nullable=False)
     due_date = db.Column(db.Date, nullable=False)
     status = db.Column(db.String(20), default=STATUS_OPTIONS[0], nullable=False)
+    order = db.Column(db.Integer, nullable=True, default=1)
     
     user_id = db.Column(db.Integer,
         db.ForeignKey('user.id', name='fk_task_user', ondelete='CASCADE'))
