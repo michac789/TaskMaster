@@ -28,42 +28,99 @@ class KanbanBoard {
 
   async init() {
     const tasks = await TaskAPI.getTasks();
-    this.leftCol = tasks['To Do'].map((task) => {
-      return new KanbanItem(task);
+    this.leftCol = tasks['To Do'].map((task, index) => {
+      return new KanbanItem(this, task);
     });
-    this.middleCol = tasks['In Progress'].map((task) => {
-      return new KanbanItem(task);
+    this.middleCol = tasks['In Progress'].map((task, index) => {
+      return new KanbanItem(this, task);
     });
-    this.rightCol = tasks['Completed'].map((task) => {
-      return new KanbanItem(task);
+    this.rightCol = tasks['Completed'].map((task, index) => {
+      return new KanbanItem(this, task);
     });
-    this.leftColDiv.innerHTML = '';
-    this.middleColDiv.innerHTML = '';
-    this.rightColDiv.innerHTML = '';
+    this.render();
+  }
+
+  modifyPosition(initialId, targetId) {
+    if (initialId === targetId) {
+      return;
+    }
+    const initialPos = initialId.split('-')[2];
+    const initialIndex = initialId.split('-')[3];
+    const targetPos = targetId.split('-')[2];
+    const targetIndex = targetId.split('-')[3];
+    let initialItem = null;
+    if (initialPos === 'left') {
+      initialItem = this.leftCol.splice(initialIndex, 1)[0];
+    } else if (initialPos === 'middle') {
+      initialItem = this.middleCol.splice(initialIndex, 1)[0];
+    } else if (initialPos === 'right') {
+      initialItem = this.rightCol.splice(initialIndex, 1)[0];
+    }
+    if (targetPos === 'left') {
+      this.leftCol.splice(targetIndex + 1, 0, initialItem);
+    } else if (targetPos === 'middle') {
+      this.middleCol.splice(targetIndex + 1, 0, initialItem);
+    } else if (targetPos === 'right') {
+      this.rightCol.splice(targetIndex + 1, 0, initialItem);
+    }
+    this.render();
+  }
+
+  getGapComponent(pos, index) {
+    const gap = document.createElement('div');
+    gap.className = 'kanban-gap';
+    gap.style.backgroundColor = 'lightblue';
+    gap.style.width = '100%';
+    gap.style.minHeight = '8px';
+    gap.classList.add('kanban-gap');
+    gap.id = `kanban-gap-${pos}-${index}`;
+    return gap;
   }
 
   render() {
-    this.leftCol.forEach((kanbanItem) => {
-      this.leftColDiv.appendChild(kanbanItem.getElement());
+    this.leftCol.forEach((kanbanItem, index) => {
+      kanbanItem.itemIndex = index;
+      kanbanItem.itemPos = 'left';
     });
-    this.middleCol.forEach((kanbanItem) => {
-      this.middleColDiv.appendChild(kanbanItem.getElement());
+    this.middleCol.forEach((kanbanItem, index) => {
+      kanbanItem.itemIndex = index;
+      kanbanItem.itemPos = 'middle';
     });
-    this.rightCol.forEach((kanbanItem) => {
-      this.rightColDiv.appendChild(kanbanItem.getElement());
+    this.rightCol.forEach((kanbanItem, index) => {
+      kanbanItem.itemIndex = index;
+      kanbanItem.itemPos = 'right';
+    });
+
+    this.leftColDiv.innerHTML = '';
+    this.middleColDiv.innerHTML = '';
+    this.rightColDiv.innerHTML = '';
+    this.leftCol.forEach((kanbanItem, index) => {
+      this.leftColDiv.appendChild(kanbanItem.getElement('left', index));
+      this.leftColDiv.appendChild(this.getGapComponent('left', index));
+    });
+    this.middleCol.forEach((kanbanItem, index) => {
+      this.middleColDiv.appendChild(kanbanItem.getElement('middle', index));
+      this.middleColDiv.appendChild(this.getGapComponent('middle', index));
+    });
+    this.rightCol.forEach((kanbanItem, index) => {
+      this.rightColDiv.appendChild(kanbanItem.getElement('right', index));
+      this.rightColDiv.appendChild(this.getGapComponent('right', index));
     });
   }
 }
 
 class KanbanItem {
-  constructor(task) {
+  constructor(board, task, pos='left', index=0) {
     const { id, title, description, due_date: dueDate, status } = task;
+    this.board = board;
     this.id = id;
     this.title = title;
     this.description = description;
     this.dueDate = dueDate;
     this.status = status;
     this.element = null;
+    this.itemPos = pos;
+    this.itemIndex = index;
   }
 
   getElement() {
@@ -89,6 +146,9 @@ class KanbanItem {
     const el = this.element;
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
     el.onmousedown = dragMouseDown;
+    const initialId = `kanban-gap-${this.itemPos}-${this.itemIndex}`
+
+    const board = this.board;
 
     function dragMouseDown(e) {
       e.preventDefault();
@@ -130,14 +190,69 @@ class KanbanItem {
       el.style.position = "fixed";
       el.style.top = (el.offsetTop - pos2) + "px";
       el.style.left = (el.offsetLeft - pos1) + "px";
+
+      // TODO - check if the element is within the boundaries of the kanban gap
+      const cursorX = e.clientX;
+      const cursorY = e.clientY;
+      const kanbanGaps = document.querySelectorAll('.kanban-gap');
+      for (const gap of kanbanGaps) {
+        const gapRect = gap.getBoundingClientRect();
+        const gapX = gapRect.left;
+        const gapY = gapRect.top;
+        const gapWidth = gapRect.width;
+        const gapHeight = gapRect.height;
+        const BUFFER_Y = 24;
+        if (
+          cursorX >= gapX &&
+          cursorX <= gapX + gapWidth &&
+          cursorY >= gapY - BUFFER_Y &&
+          cursorY <= gapY + gapHeight + BUFFER_Y
+        ) {
+          gap.style.backgroundColor = 'green';
+        } else {
+          gap.style.backgroundColor = 'lightblue';
+        }
+      }
     }
   
-    function closeDragElement() {
+    function closeDragElement(e) {
+      // console.log('DROPPED x:', el.offsetLeft, 'y:', el.offsetTop);
+
+      const cursorX = e.clientX;
+      const cursorY = e.clientY;
+
+      // Check if the dropped element overlaps with any 'kanban-gap'
+      const kanbanGaps = document.querySelectorAll('.kanban-gap');
+      for (const gap of kanbanGaps) {
+        const gapRect = gap.getBoundingClientRect();
+        const gapX = gapRect.left;
+        const gapY = gapRect.top;
+        const gapWidth = gapRect.width;
+        const gapHeight = gapRect.height;
+        const BUFFER_Y = 24;
+        // console.log('Gap:', gapX, gapY, gapWidth, gapHeight)
+
+        // Check if the dropped coordinates are within the boundaries of the gap
+        if (
+          cursorX >= gapX &&
+          cursorX <= gapX + gapWidth &&
+          cursorY >= gapY - BUFFER_Y &&
+          cursorY <= gapY + gapHeight + BUFFER_Y
+        ) {
+          board.modifyPosition(initialId, gap.id);
+          // Move the element to the gap
+          gap.insertAdjacentElement('beforebegin', el);
+          return;
+        }
+      }
+
       // go back to original position, remove temporary div
       const kanbanTemporary = document.getElementById('kanban-temporary');
-      el.style.position = "initial";
-      kanbanTemporary.insertAdjacentElement('afterend', el);
-      kanbanTemporary.remove();
+      if (kanbanTemporary) {
+        el.style.position = "initial";
+        kanbanTemporary.insertAdjacentElement('afterend', el);
+        kanbanTemporary.remove();
+      }
 
       // stop moving when mouse button is released:
       document.onmouseup = null;
@@ -146,8 +261,7 @@ class KanbanItem {
   }
 }
 
-const createKanbanBoard = async () => {
+const createKanbanBoard = () => {
   const kanbanBoard = new KanbanBoard();
-  await kanbanBoard.init();
-  kanbanBoard.render();
+  kanbanBoard.init();
 }
