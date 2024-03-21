@@ -31,6 +31,20 @@
     overflow-y: scroll;
 }
 
+.kanban-title {
+    margin-bottom: 8px;
+
+    @media (max-width: 768px) {
+        margin-bottom: 4px;
+    }
+}
+
+.kanban-tasks {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .kanban-gap {
     display: flex;
     min-height: 8px;
