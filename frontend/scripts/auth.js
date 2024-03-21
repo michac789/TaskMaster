@@ -96,7 +96,7 @@ const handleLogin = async () => {
     // if successful, save the token to local storage and redirect to tasks page
     if (response.status === 200) {
       localStorage.setItem('jwtToken', responseData.token);
-      handlePageChange('tasks');
+      handlePageChange('tasks');  // TODO - redirect depending on the page the user was on before logging in
     } else {
 
       // if unsuccessful, display the error message
