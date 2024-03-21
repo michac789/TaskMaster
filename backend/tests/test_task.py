@@ -523,3 +523,104 @@ class TaskDeleteTestCase(SampleDataMixin, unittest.TestCase):
         )
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.json, {'error': 'Forbidden'})
+
+
+class TaskCreateOrderTestCase(SampleDataMixin, unittest.TestCase):
+    def setUp(self):
+        super().setUp()
+        response1 = self.client.post(
+            '/login',
+            json={'username': 'user1', 'password': 'password1'},
+        )
+        self.token1 = response1.json['token']
+        
+    def test_task_create_order_success_1(self):
+        response = self.client.put(
+            '/tasks/kanban',
+            json={
+                'To Do': [4, 2, 3],
+                'In Progress': [],
+                'Completed': [1],    
+            },
+            headers={'Authorization': self.token1},
+        )
+        self.assertEqual(response.status_code, 200)
+        with self.app.app_context():
+            task = db.session.get(Task, 1)
+            self.assertEqual(task.order, 1)
+            self.assertEqual(task.status, 'Completed')
+            task = db.session.get(Task, 2)
+            self.assertEqual(task.order, 2)
+            self.assertEqual(task.status, 'To Do')
+            task = db.session.get(Task, 3)
+            self.assertEqual(task.order, 3)
+            self.assertEqual(task.status, 'To Do')
+            task = db.session.get(Task, 4)
+            self.assertEqual(task.order, 1)
+            self.assertEqual(task.status, 'To Do')
+            
+    def test_task_create_order_success_2(self):
+        response = self.client.put(
+            '/tasks/kanban',
+            json={
+                'To Do': [],
+                'In Progress': [1, 4, 2, 3],
+                'Completed': [],    
+            },
+            headers={'Authorization': self.token1},
+        )
+        self.assertEqual(response.status_code, 200)
+        with self.app.app_context():
+            task = db.session.get(Task, 1)
+            self.assertEqual(task.order, 1)
+            self.assertEqual(task.status, 'In Progress')
+            task = db.session.get(Task, 4)
+            self.assertEqual(task.order, 2)
+            self.assertEqual(task.status, 'In Progress')
+            task = db.session.get(Task, 2)
+            self.assertEqual(task.order, 3)
+            self.assertEqual(task.status, 'In Progress')
+            task = db.session.get(Task, 3)
+            self.assertEqual(task.order, 4)
+            self.assertEqual(task.status, 'In Progress')
+        
+    def test_task_create_order_failure_1(self):
+        response = self.client.put(
+            '/tasks/kanban',
+            json={
+                'To Do': [],
+                'In Progress': [1, 5, 4, 2, 3],
+                'Completed': [],    
+            },
+            headers={'Authorization': 'invalid token'},
+        )
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.json, {'error': 'Invalid token'})
+        
+    def test_task_create_order_failure_2(self):
+        # task id 5 does not belong to this user
+        response = self.client.put(
+            '/tasks/kanban',
+            json={
+                'To Do': [],
+                'In Progress': [1, 5, 4, 2, 3],
+                'Completed': [],    
+            },
+            headers={'Authorization': self.token1},
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.json, {'error': 'Forbidden'})
+        
+    def test_task_create_order_failure_3(self):
+        # task id 9999 does not exist
+        response = self.client.put(
+            '/tasks/kanban',
+            json={
+                'To Do': [9999],
+                'In Progress': [],
+                'Completed': [],    
+            },
+            headers={'Authorization': self.token1},
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json, {'error': 'Task with id 9999 not found!'})
