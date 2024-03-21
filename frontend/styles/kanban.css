@@ -1,11 +1,17 @@
 
+.kanban-bg-container {
+    background: linear-gradient(45deg, #f5f5dc, #e0e0d1);
+}
+
 .kanban-container {
     display: flex;
     flex-direction: row;
-    padding: 16px;
-    gap: 8px;
+    justify-content: center;
+    padding: 0 8px;
     height: calc(100vh - 50px);
     box-sizing: border-box;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .kanban-column {
@@ -13,18 +19,18 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-
-    /* gap: 8px; */
-    padding: 8px;
+    
+    padding: 16px;
     height: 100%;
     box-sizing: border-box;
-    border: 1px solid black;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
     overflow-y: scroll;
 }
 
 .kanban-item {
     background-color: red;
-    cursor: pointer;
+    cursor: move;
     width: calc((100vw - 126px) / 3);
 
     transition: all 0.3s ease;
