@@ -28,26 +28,25 @@ class KanbanBoard {
 
   async init() {
     const tasks = await TaskAPI.getTasks();
-    this.leftCol = tasks['To Do'].map((task, index) => {
+    this.leftCol = tasks['To Do'].map((task) => {
       return new KanbanItem(this, task);
     });
-    this.middleCol = tasks['In Progress'].map((task, index) => {
+    this.middleCol = tasks['In Progress'].map((task) => {
       return new KanbanItem(this, task);
     });
-    this.rightCol = tasks['Completed'].map((task, index) => {
+    this.rightCol = tasks['Completed'].map((task) => {
       return new KanbanItem(this, task);
     });
     this.render();
   }
 
-  modifyPosition(initialId, targetId) {
-    if (initialId === targetId) {
-      return;
+  modifyPosition(initialPos, initialIndex, targetPos, targetIndex) {
+    if (initialPos === targetPos) {
+      if (initialIndex === targetIndex || initialIndex === targetIndex - 1) {
+        return;
+      }
     }
-    const initialPos = initialId.split('-')[2];
-    const initialIndex = initialId.split('-')[3];
-    const targetPos = targetId.split('-')[2];
-    const targetIndex = targetId.split('-')[3];
+
     let initialItem = null;
     if (initialPos === 'left') {
       initialItem = this.leftCol.splice(initialIndex, 1)[0];
@@ -125,15 +124,29 @@ class KanbanItem {
 
   getElement() {
     const kanbanItem = document.createElement('div');
-    kanbanItem.classList.add('kanban-item');
+    kanbanItem.classList.add('taskcard-container', 'kanban-item');
     kanbanItem.id = `kanban-item-${this.id}`;
     kanbanItem.innerHTML = `
-      <div class="kanban-item-header">
-        <h3>${this.title}</h3>
-        <p>${this.dueDate}</p>
+      <div class="taskcard-header">
+        <div class="typography-subtitle">
+          ${this.title}
+        </div>
       </div>
-      <div class="kanban-item-body">
-        <p>${this.description}</p>
+      <div class="typography-overline">
+        Due date: ${this.dueDate}
+      </div>
+      <div class="typography-body">
+        ${this.description}
+      </div>
+      <div class="taskcard-actions">
+        <button class="typography-button button-outline-danger button-sm"
+            onclick="confirmDeleteTask(${this.id}, '${this.title}')">
+          Delete
+        </button>
+        <button class="typography-button button-fill-primary button-sm"
+            onclick="editTaskCard(${this.id}, '${this.title}', '${this.description}', '${this.dueDate}', '${this.status}')">
+          Edit
+        </button>
       </div>
     `;
     this.element = kanbanItem;
@@ -146,7 +159,9 @@ class KanbanItem {
     const el = this.element;
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
     el.onmousedown = dragMouseDown;
-    const initialId = `kanban-gap-${this.itemPos}-${this.itemIndex}`
+
+    const initialPos = this.itemPos;
+    const initialIndex = this.itemIndex;
 
     const board = this.board;
 
@@ -239,7 +254,8 @@ class KanbanItem {
           cursorY >= gapY - BUFFER_Y &&
           cursorY <= gapY + gapHeight + BUFFER_Y
         ) {
-          board.modifyPosition(initialId, gap.id);
+          const [_, __, targetPos, targetIndex] = gap.id.split('-');
+          board.modifyPosition(initialPos, initialIndex, targetPos, targetIndex);
           // Move the element to the gap
           gap.insertAdjacentElement('beforebegin', el);
           return;
