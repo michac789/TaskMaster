@@ -29,6 +29,7 @@
     @media (max-width: 768px) {
         height: calc(100vh - 40px);
         transform: translateY(40px);
+        overflow-x: auto;
     }
 }
 
