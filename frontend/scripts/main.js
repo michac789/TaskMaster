@@ -25,6 +25,9 @@ const handlePageChange = async (pageName) => {
   aboutPage.style.display = 'none';
   kanbanPage.style.display = 'none';
 
+  const mainContainer = document.getElementById('main-container');
+  mainContainer.style.overflowY = 'auto';
+
   switch (pageName) {
     case 'tasks':
       setActiveMenu('tasks');
@@ -168,6 +171,8 @@ const navigateAboutPage = (page) => {
 }
 
 const navigateKanbanPage = async (page) => {
+  const mainContainer = document.getElementById('main-container');
+  mainContainer.style.overflowY = 'hidden';
   page.style.display = 'flex';
   createKanbanBoard();
 }

@@ -43,10 +43,11 @@ class KanbanBoard {
   modifyPosition(initialPos, initialIndex, targetPos, targetIndex) {
     if (initialPos === targetPos) {
       if (initialIndex === targetIndex || initialIndex === targetIndex - 1) {
+        this.render();
         return;
       }
     }
-
+    
     let initialItem = null;
     if (initialPos === 'left') {
       initialItem = this.leftCol.splice(initialIndex, 1)[0];
@@ -55,12 +56,17 @@ class KanbanBoard {
     } else if (initialPos === 'right') {
       initialItem = this.rightCol.splice(initialIndex, 1)[0];
     }
+
+    if (initialPos === targetPos && initialIndex < targetIndex) {
+      targetIndex -= 1;
+    }
+
     if (targetPos === 'left') {
-      this.leftCol.splice(targetIndex + 1, 0, initialItem);
+      this.leftCol.splice(targetIndex, 0, initialItem);
     } else if (targetPos === 'middle') {
-      this.middleCol.splice(targetIndex + 1, 0, initialItem);
+      this.middleCol.splice(targetIndex, 0, initialItem);
     } else if (targetPos === 'right') {
-      this.rightCol.splice(targetIndex + 1, 0, initialItem);
+      this.rightCol.splice(targetIndex, 0, initialItem);
     }
     this.render();
   }
@@ -93,17 +99,20 @@ class KanbanBoard {
     this.leftColDiv.innerHTML = '';
     this.middleColDiv.innerHTML = '';
     this.rightColDiv.innerHTML = '';
+    this.leftColDiv.appendChild(this.getGapComponent('left', 0));
     this.leftCol.forEach((kanbanItem, index) => {
-      this.leftColDiv.appendChild(kanbanItem.getElement('left', index));
-      this.leftColDiv.appendChild(this.getGapComponent('left', index));
+      this.leftColDiv.appendChild(kanbanItem.getElement('left', index + 1));
+      this.leftColDiv.appendChild(this.getGapComponent('left', index + 1));
     });
+    this.middleColDiv.appendChild(this.getGapComponent('middle', 0));
     this.middleCol.forEach((kanbanItem, index) => {
-      this.middleColDiv.appendChild(kanbanItem.getElement('middle', index));
-      this.middleColDiv.appendChild(this.getGapComponent('middle', index));
+      this.middleColDiv.appendChild(kanbanItem.getElement('middle', index + 1));
+      this.middleColDiv.appendChild(this.getGapComponent('middle', index + 1));
     });
+    this.rightColDiv.appendChild(this.getGapComponent('right', 0));
     this.rightCol.forEach((kanbanItem, index) => {
-      this.rightColDiv.appendChild(kanbanItem.getElement('right', index));
-      this.rightColDiv.appendChild(this.getGapComponent('right', index));
+      this.rightColDiv.appendChild(kanbanItem.getElement('right', index + 1));
+      this.rightColDiv.appendChild(this.getGapComponent('right', index + 1));
     });
   }
 }
@@ -162,12 +171,11 @@ class KanbanItem {
 
     const initialPos = this.itemPos;
     const initialIndex = this.itemIndex;
-
     const board = this.board;
 
     function dragMouseDown(e) {
       e.preventDefault();
-      const { left, top, height } = el.getBoundingClientRect();
+      const { left, top, height, width } = el.getBoundingClientRect();
 
       // create a temporary div to hold the space
       const newDiv = document.createElement('div');
@@ -187,6 +195,7 @@ class KanbanItem {
       el.style.position = "fixed";
       el.style.top = top - NAVBAR_HEIGHT + "px";
       el.style.left = left + "px";
+      el.style.width = `${width}px`;
 
       document.onmouseup = closeDragElement;
       document.onmousemove = elementDrag;
@@ -231,12 +240,11 @@ class KanbanItem {
     }
   
     function closeDragElement(e) {
-      // console.log('DROPPED x:', el.offsetLeft, 'y:', el.offsetTop);
-
+      // get the position of the cursor
       const cursorX = e.clientX;
       const cursorY = e.clientY;
 
-      // Check if the dropped element overlaps with any 'kanban-gap'
+      // check if dropped element is within the boundaries of the kanban gap
       const kanbanGaps = document.querySelectorAll('.kanban-gap');
       for (const gap of kanbanGaps) {
         const gapRect = gap.getBoundingClientRect();
@@ -245,9 +253,7 @@ class KanbanItem {
         const gapWidth = gapRect.width;
         const gapHeight = gapRect.height;
         const BUFFER_Y = 24;
-        // console.log('Gap:', gapX, gapY, gapWidth, gapHeight)
 
-        // Check if the dropped coordinates are within the boundaries of the gap
         if (
           cursorX >= gapX &&
           cursorX <= gapX + gapWidth &&
@@ -256,8 +262,8 @@ class KanbanItem {
         ) {
           const [_, __, targetPos, targetIndex] = gap.id.split('-');
           board.modifyPosition(initialPos, initialIndex, targetPos, targetIndex);
-          // Move the element to the gap
-          gap.insertAdjacentElement('beforebegin', el);
+          // move the element to the new position
+          // gap.insertAdjacentElement('beforebegin', el);
           return;
         }
       }
