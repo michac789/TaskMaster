@@ -119,6 +119,35 @@ def get_all_tasks(user):
 
 
 '''
+    Accept a list of tasks and their Task id in ascending order.
+    Example:
+    {
+        "To Do": [1, 2, 3],
+        "In Progress": [5, 6],
+        "Completed": [4]
+    }
+    Assign 'order' to each task based on the order in the list.
+'''
+@app.route('/tasks/kanban', methods=['PUT'])
+@auth_required
+def create_tasks_order(user):
+    try:
+        data = request.json
+        for status in Task.STATUS_OPTIONS:
+            for i, task_id in enumerate(data[status]):
+                task = db.session.get(Task, task_id)
+                if not task:
+                    return {'error': f'Task with id {task_id} not found!'}, 404
+                assert task.user_id == user.id
+                task.status = status
+                task.order = i + 1
+        db.session.commit()
+        return {}, 200
+    except AssertionError:
+        return {'error': 'Forbidden'}, 403
+
+
+'''
     Create a new task, use the current user id as the user_id.
     Return 401 if the user is not authenticated.
     Return 400 along with the validation errors if the input is invalid.
