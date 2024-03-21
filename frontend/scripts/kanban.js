@@ -71,6 +71,22 @@ class TaskAPI {
       window.alert('Something went wrong. Please try again later.');
     }
   }
+
+  static async updateOrder(data) {
+    try {
+      const response = await fetch(`${TASKS_ENDPOINT}/kanban`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('jwtToken')
+        },
+        body: JSON.stringify(data)
+      });
+      return {data: {}, responseStatus: response.status};
+    } catch {
+      window.alert('Something went wrong. Please try again later.');
+    }
+  }
 }
 
 class KanbanBoard {
@@ -127,6 +143,16 @@ class KanbanBoard {
     } else if (targetPos === 'right') {
       this.rightCol.splice(targetIndex, 0, initialItem);
     }
+
+    const leftIds = this.leftCol.map((item) => item.id);
+    const middleIds = this.middleCol.map((item) => item.id);
+    const rightIds = this.rightCol.map((item) => item.id);
+    const data = {
+      ['To Do']: leftIds,
+      ['In Progress']: middleIds,
+      ['Completed']: rightIds
+    }
+    TaskAPI.updateOrder(data);
 
     this.render(itemId, initialPos, initialIndex);
   }
