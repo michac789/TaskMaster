@@ -149,6 +149,8 @@ class KanbanBoard {
   }
 
   render(itemId=null, initialPos=null, initialIndex=null) {
+    KanbanBoard.enableDraggingHover();
+
     this.leftCol.forEach((kanbanItem, index) => {
       kanbanItem.itemIndex = index;
       kanbanItem.itemPos = 'left';
@@ -226,6 +228,7 @@ class KanbanBoard {
 
     // render empty task card
     this.isEditMode = true;
+    KanbanBoard.disableDraggingHover();
     const button = document.getElementById(`create-task-${status}`);
     button.insertAdjacentHTML('beforebegin', `
       <div class="taskcard-container kanban-item">
@@ -285,6 +288,19 @@ class KanbanBoard {
     // update the task and render the board if successful
     this.isEditMode = false;
     this.init();
+  }
+
+  static disableDraggingHover() {
+    const cards = document.querySelectorAll('.kanban-item');
+    for (const card of cards) {
+      card.style.cursor = 'not-allowed';
+    }
+  }
+  static enableDraggingHover() {
+    const cards = document.querySelectorAll('.kanban-item');
+    for (const card of cards) {
+      card.style.cursor = 'grab';
+    }
   }
 }
 
@@ -480,6 +496,7 @@ class KanbanItem {
     }
     
     this.board.isEditMode = true;
+    KanbanBoard.disableDraggingHover();
     this.element.innerHTML = `
       <div class="typography-title2">
         ${this.title}
