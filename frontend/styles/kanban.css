@@ -31,6 +31,14 @@
     overflow-y: scroll;
 }
 
+.kanban-gap {
+    display: flex;
+    min-height: 8px;
+    width: 100%;
+    border-radius: 8px;
+    background-color: transparent;
+}
+
 .kanban-item {
     background-color: red;
     cursor: move;

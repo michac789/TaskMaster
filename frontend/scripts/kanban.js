@@ -109,10 +109,6 @@ class KanbanBoard {
 
   getGapComponent(pos, index) {
     const gap = document.createElement('div');
-    gap.className = 'kanban-gap';
-    gap.style.backgroundColor = 'lightblue';
-    gap.style.width = '100%';
-    gap.style.minHeight = '8px';
     gap.classList.add('kanban-gap');
     gap.id = `kanban-gap-${pos}-${index}`;
     return gap;
@@ -224,11 +220,11 @@ class KanbanItem {
       e.preventDefault();
       const { left, top, height, width } = el.getBoundingClientRect();
 
-      // create a temporary div to hold the space
+      // create a temporary invisible div to hold the space
       const newDiv = document.createElement('div');
       newDiv.id='kanban-temporary';
       newDiv.style.minHeight = `${height}px`
-      newDiv.style.width = '100px';
+      newDiv.style.opacity = '0';
       newDiv.style.backgroundColor = 'aqua';
       el.insertAdjacentElement('afterend', newDiv);
 
@@ -280,9 +276,15 @@ class KanbanItem {
           cursorY >= gapY - BUFFER_Y &&
           cursorY <= gapY + gapHeight + BUFFER_Y
         ) {
-          gap.style.backgroundColor = 'green';
+          // styles when hovering over the gap while dragging
+          gap.style.height = '100px';
+          gap.style.margin = '8px 0';
+          gap.style.backgroundColor = '#d4d6da';
         } else {
-          gap.style.backgroundColor = 'lightblue';
+          // reset styles when not hovering over the gap
+          gap.style.height = '8px';
+          gap.style.margin = '0';
+          gap.style.backgroundColor = 'transparent';
         }
       }
     }
@@ -302,6 +304,7 @@ class KanbanItem {
         const gapHeight = gapRect.height;
         const BUFFER_Y = 24;
 
+        // move element to the new position if it is within the buffer zone
         if (
           cursorX >= gapX &&
           cursorX <= gapX + gapWidth &&
@@ -310,13 +313,13 @@ class KanbanItem {
         ) {
           const [_, __, targetPos, targetIndex] = gap.id.split('-');
           board.modifyPosition(initialPos, initialIndex, targetPos, targetIndex);
-          // move the element to the new position
-          // gap.insertAdjacentElement('beforebegin', el);
+          document.onmouseup = null;
+          document.onmousemove = null;
           return;
         }
       }
 
-      // go back to original position, remove temporary div
+      // if not, go back to original position, remove temporary div
       const kanbanTemporary = document.getElementById('kanban-temporary');
       if (kanbanTemporary) {
         el.style.position = "initial";
