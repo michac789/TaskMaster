@@ -191,5 +191,5 @@ const navigateKanbanPage = async (page) => {
 
 const navigateGanttPage = async (page) => {
   page.style.display = 'flex';
-  // createGanttChart();
+  createGanttChart();
 }

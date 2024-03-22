@@ -27,6 +27,7 @@
   <!-- All JS Files here -->
   <script src="scripts/main.js"></script>
   <script src="scripts/auth.js"></script>
+  <script src="scripts/gantt.js"></script>
   <script src="scripts/kanban.js"></script>
   <script src="scripts/tasks.js"></script>
 </head>
@@ -106,19 +107,52 @@
     </div>
 
     <div class="gantt-container" id="page-gantt">
-      <div class="typography-title1">
+      <div class="gantt-title typography-title1">
+        Gantt Chart
+      </div>
+      
+      <div class="gantt-checkbox-container">
+        <div class="typography-body">
+          Status:
+        </div>
+        <label class="input-standard typography-button">
+          <input type="checkbox" name="status" value="To_Do"
+            id="gantt-todo" onchange="createGanttChart()" checked>
+          To Do
+        </label>
+        <label class="input-standard typography-button">
+          <input type="checkbox" name="status" value="In_Progress"
+            id="gantt-progress" onchange="createGanttChart()" checked>
+          In Progress
+        </label>
+        <label class="input-standard typography-button">
+          <input type="checkbox" name="status" value="Completed"
+            id="gantt-completed" onchange="createGanttChart()">
+          Completed
+        </label>
+      </div>
+
+      <div class="gantt-select-container">
+        <div class="typography-body">
+          Sort:
+        </div>
+        <select class="input-standard typography-body"
+            id="gantt-sort" onchange="createGanttChart()">
+          <option value="-due_date">Due Date Descending</option>
+          <option value="due_date">Due Date Ascending</option>
+          <option value="order">Kanban Order</option>
+          <option value="title">Title Ascending</option>
+          <option value="-title">Title Descending</option>
+        </select>
+      </div>
+
+      <div class="gantt-loading" id="gantt-loading">
+        Loading state...
+      </div>
+
+      <div class="gantt-content" id="gantt-content">
         TODO - Gantt Chart
       </div>
-      <div class="typography-body">
-        This page is under construction.
-      </div>
-      <ol>
-        <li>Add field 'start_date', update existing backend api and test cases, migrate database</li>
-        <li>Update existing frontend to create/edit/view 'start_date' field</li>
-        <li>Create API to fetch data, filter by status, order by due date</li>
-        <li>Create UI (checkbox for status), sort by (select option), time range (select option), sample table</li>
-        <li>Connect with API and all done :)</li>
-      </ol>
     </div>
 
     <div class="layout-login-container" id="page-login">

@@ -7,3 +7,43 @@
     height: 100%;
     overflow: hidden;
 }
+
+.gantt-title {
+    margin: 8px;
+}
+
+.gantt-checkbox-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    min-width: 550px;
+    margin-bottom: 8px;
+
+    @media (max-width: 768px) {
+        gap: 8px;
+        min-width: 300px;
+        margin-bottom: 4px;
+    }
+}
+
+.gantt-select-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 8px;
+
+    @media (max-width: 768px) {
+        gap: 8px;
+        margin-bottom: 4px;
+    }
+}
+
+.gantt-loading {
+    display: none;
+}
+
+.gantt-content {
+    display: none;
+}
