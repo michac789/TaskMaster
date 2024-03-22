@@ -609,7 +609,7 @@ class TaskDeleteTestCase(SampleDataMixin, unittest.TestCase):
         self.assertEqual(response.json, {'error': 'Forbidden'})
 
 
-class TaskCreateOrderTestCase(SampleDataMixin, unittest.TestCase):
+class TaskUpdateKanbanOrderTestCase(SampleDataMixin, unittest.TestCase):
     def setUp(self):
         super().setUp()
         response1 = self.client.post(
@@ -708,3 +708,17 @@ class TaskCreateOrderTestCase(SampleDataMixin, unittest.TestCase):
         )
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.json, {'error': 'Task with id 9999 not found!'})
+        
+    def test_task_create_order_failure_4(self):
+        # duplicated task id
+        response = self.client.put(
+            '/tasks/kanban',
+            json={
+                'To Do': [1, 3, 4],
+                'In Progress': [2],
+                'Completed': [3],    
+            },
+            headers={'Authorization': self.token1},
+        )
+        self.assertEqual(response.status_code, 409)
+        self.assertEqual(response.json, {'error': 'Task with id 3 is duplicated!'})
