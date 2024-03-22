@@ -115,6 +115,22 @@ def get_all_tasks(user):
             tasks_per_status[status] = sorted(tasks_per_status[status], key=lambda task: task['order'])
         return tasks_per_status, 200
     else:
+        # filter_param format: ?filter=To_Do,In_Progress,Completed
+        filter_param = request.args.get('filter')
+        if filter_param:
+            statuses = filter_param.split(',')
+            statuses = [status.replace('_', ' ') for status in statuses]
+            tasks = [task for task in tasks if task.status in statuses]
+        
+        # sort_param format: ?sort=due_date (or other Task attribute, add '-' for descending order)
+        sort_param = request.args.get('sort')
+        if sort_param:
+            if sort_param[0] == '-':
+                sort_param = sort_param[1:]
+                tasks = sorted(tasks, key=lambda task: getattr(task, sort_param), reverse=True)
+            else:
+                tasks = sorted(tasks, key=lambda task: getattr(task, sort_param))
+        
         return [task.serialize() for task in tasks], 200
 
 
