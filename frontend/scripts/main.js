@@ -18,12 +18,14 @@ const handlePageChange = async (pageName) => {
   const registerPage = document.getElementById('page-register');
   const aboutPage = document.getElementById('page-about');
   const kanbanPage = document.getElementById('page-kanban');
+  const ganttPage = document.getElementById('page-gantt');
 
   tasksPage.style.display = 'none';
   loginPage.style.display = 'none';
   registerPage.style.display = 'none';
   aboutPage.style.display = 'none';
   kanbanPage.style.display = 'none';
+  ganttPage.style.display = 'none';
 
   const mainContainer = document.getElementById('main-container');
   mainContainer.style.overflowY = 'auto';
@@ -46,6 +48,11 @@ const handlePageChange = async (pageName) => {
     case 'kanban':
       setActiveMenu('kanban');
       loginRequired(() => navigateKanbanPage(kanbanPage));
+      break;
+    case 'gantt':
+      setActiveMenu('gantt');
+      loginRequired(() => navigateGanttPage(ganttPage));
+      break;
   }
 }
 
@@ -56,9 +63,11 @@ const handlePageChange = async (pageName) => {
 const setActiveMenu = (menu) => {
   const navbarOptionTasks = document.getElementById('navbar-option-tasks');
   const navbarOptionKanban = document.getElementById('navbar-option-kanban');
+  const navbarOptionGantt = document.getElementById('navbar-option-gantt');
   const navbarOptionAbout = document.getElementById('navbar-option-about');
   navbarOptionTasks.classList.remove('navbar-selected');
   navbarOptionKanban.classList.remove('navbar-selected');
+  navbarOptionGantt.classList.remove('navbar-selected');
   navbarOptionAbout.classList.remove('navbar-selected');
   switch (menu) {
     case 'tasks':
@@ -66,6 +75,9 @@ const setActiveMenu = (menu) => {
       break;
     case 'kanban':
       navbarOptionKanban.classList.add('navbar-selected');
+      break;
+    case 'gantt':
+      navbarOptionGantt.classList.add('navbar-selected');
       break;
     case 'about':
       navbarOptionAbout.classList.add('navbar-selected');
@@ -175,4 +187,9 @@ const navigateKanbanPage = async (page) => {
   mainContainer.style.overflowY = 'hidden';
   page.style.display = 'flex';
   createKanbanBoard();
+}
+
+const navigateGanttPage = async (page) => {
+  page.style.display = 'flex';
+  // createGanttChart();
 }
