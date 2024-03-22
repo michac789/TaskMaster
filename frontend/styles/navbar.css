@@ -13,6 +13,19 @@
     transition: all 0.3s ease;
     width: 200px;
 
+    @media (max-width: 992px) {
+        > span {
+            display: none;
+        }
+        width: 48px;
+        justify-content: flex-start;
+        align-items: center;
+        margin-left: 0;
+        box-sizing: border-box;
+        > i {
+            transform: translateX(-6px);
+        }
+    }
     @media (max-width: 768px) {
         > span {
             display: none;

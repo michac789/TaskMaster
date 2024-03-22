@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="styles/typography.css">
   <link rel="stylesheet" href="styles/button.css">
   <link rel="stylesheet" href="styles/color.css">
+  <link rel="stylesheet" href="styles/gantt.css">
   <link rel="stylesheet" href="styles/global.css">
   <link rel="stylesheet" href="styles/input.css">
   <link rel="stylesheet" href="styles/kanban.css">
@@ -45,6 +46,10 @@
       <div class="typography-button navbar-option"
           id="navbar-option-kanban" onclick="handlePageChange('kanban')">
         KANBAN
+      </div>
+      <div class="typography-button navbar-option"
+          id="navbar-option-gantt" onclick="handlePageChange('gantt')">
+        TIMELINE
       </div>
       <div class="typography-button navbar-option"
           id="navbar-option-about" onclick="handlePageChange('about')">
@@ -98,6 +103,22 @@
           <div class="kanban-tasks" id="kanban-right"></div>
         </div>
       </div>
+    </div>
+
+    <div class="gantt-container" id="page-gantt">
+      <div class="typography-title1">
+        TODO - Gantt Chart
+      </div>
+      <div class="typography-body">
+        This page is under construction.
+      </div>
+      <ol>
+        <li>Add field 'start_date', update existing backend api and test cases, migrate database</li>
+        <li>Update existing frontend to create/edit/view 'start_date' field</li>
+        <li>Create API to fetch data, filter by status, order by due date</li>
+        <li>Create UI (checkbox for status), sort by (select option), time range (select option), sample table</li>
+        <li>Connect with API and all done :)</li>
+      </ol>
     </div>
 
     <div class="layout-login-container" id="page-login">
