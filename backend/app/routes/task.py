@@ -50,15 +50,24 @@ def get_all_tasks(user):
         "Completed": [4]
     }
     Assign 'order' to each task based on the order in the list.
+    Return 401 if the user is not authenticated.
+    Return 404 if the task id is invalid.
+    Return 403 if the task does not belong to the current user.
+    Return 409 if there are duplicated task ids.
+    Return 200 if the tasks are updated successfully, with an empty response.
 '''
 @app.route('/tasks/kanban', methods=['PUT'])
 @auth_required
-def update_tasks_order(user):
+def update_kanban_tasks_order(user):
     try:
         data = request.json
+        task_ids = set()
         for status in Task.STATUS_OPTIONS:
             for i, task_id in enumerate(data[status]):
                 task = db.session.get(Task, task_id)
+                if task_id in task_ids:
+                    return {'error': f'Task with id {task_id} is duplicated!'}, 409
+                task_ids.add(task_id)
                 if not task:
                     return {'error': f'Task with id {task_id} not found!'}, 404
                 assert task.user_id == user.id
