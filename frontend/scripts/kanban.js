@@ -168,7 +168,7 @@ class KanbanBoard {
     const createTaskButton = document.createElement('button');
     createTaskButton.classList.add('typography-button', 'button-fill-primary', 'button-sm-long');
     createTaskButton.id = `create-task-${status}`
-    createTaskButton.innerText = 'Create Task ';
+    createTaskButton.innerText = 'Add Task ';
     createTaskButton.innerHTML += '<i class="ri-add-line"></i>';
     createTaskButton.onclick = this.handleCreate.bind(this, status);
     return createTaskButton;
@@ -600,7 +600,7 @@ class KanbanItem {
     const {data, responseStatus} = await TaskAPI.editTask(this.id, title, description, dueDate);
     if (responseStatus !== 200) {
       const errorDiv = document.getElementById('task-editable-error');
-      errorDiv.innerHTML = data.message;
+      errorDiv.innerHTML = data.error;
       return;
     }
 
