@@ -19,7 +19,7 @@ const createGanttChart = async (reset=false) => {
     document.getElementById('gantt-todo').checked = true;
     document.getElementById('gantt-progress').checked = true;
     document.getElementById('gantt-completed').checked = false;
-    document.getElementById('gantt-sort').value = '-due_date';
+    document.getElementById('gantt-sort').value = 'due_date';
   }
 
   // get all input elements (for filter & sort), set query parameters
@@ -48,16 +48,45 @@ const createGanttChart = async (reset=false) => {
       }
     });
     const tasks = await response.json();
-    // console.log(tasks)
 
     // width and number of days in timeline depends on window width
     const timelineWidth = window.innerWidth - 350;
     const numDays = Math.floor(timelineWidth / 16);
-    console.log(numDays);
 
-    // populate tasks in gantt chart
+    const today = new Date();
+    const isWithin7DaysBefore = (currDate, dueDate) => {
+      const days = (dueDate - currDate) / (24 * 60 * 60 * 1000);
+      return -1 <= days && days <= 7;
+    }
+    const formatDate = (date) => {
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Note: Month is zero-based
+      return `${day}/${month}`;
+    };
+    
+    // display date on top of gantt chart
     const tableContainer = document.getElementById('gantt-content');
     tableContainer.innerHTML = '';
+    const dateContainer = document.createElement('div');
+    dateContainer.classList.add('gantt-row');
+    dateContainer.innerHTML = '';
+
+    const numDates = Math.floor(numDays / 7) + 1;
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate() - 7);
+    
+    for (let i = 0; i < numDates; i++) {
+      const dateDiv = document.createElement('div');
+      dateDiv.classList.add('typography-overline');
+      dateDiv.style.position = 'absolute';
+      dateDiv.style.left = `${320 + i * 16 * 7}px`;
+      dateDiv.innerHTML = formatDate(startDate);
+      dateContainer.appendChild(dateDiv);
+      startDate.setDate(startDate.getDate() + 7);
+    }
+    tableContainer.appendChild(dateContainer);
+
+    // populate tasks in gantt chart
     tasks.forEach(task => {
       const taskDiv = document.createElement('div');
       taskDiv.classList.add('gantt-row');
@@ -66,7 +95,10 @@ const createGanttChart = async (reset=false) => {
           ${task.title}
         </div>
       `;
-
+      
+      const currDate = new Date(today);
+      currDate.setDate(today.getDate() - 7);
+      const taskDueDate = new Date(task.due_date);
       const timelineDiv = document.createElement('div');
       timelineDiv.classList.add('gantt-row-timeline');
       timelineDiv.style.width = `${timelineWidth}px`;
@@ -74,12 +106,20 @@ const createGanttChart = async (reset=false) => {
       // timeline tiles for each day
       for (let i = 0; i < numDays; i++) {
         const dayDiv = document.createElement('div');
-        if (i === 1) {
+        if (isWithin7DaysBefore(currDate, taskDueDate)) {
           dayDiv.classList.add('gantt-tile-active');
+          if (task.status === 'To Do') {
+            dayDiv.classList.add('bg-warning');
+          } else if (task.status === 'In Progress') {
+            dayDiv.classList.add('bg-primary');
+          } else if (task.status === 'Completed') {
+            dayDiv.classList.add('bg-success');
+          }
         } else {
           dayDiv.classList.add('gantt-tile');
         }
         timelineDiv.appendChild(dayDiv);
+        currDate.setDate(currDate.getDate() + 1);
       }
 
       taskDiv.appendChild(timelineDiv);
@@ -89,7 +129,8 @@ const createGanttChart = async (reset=false) => {
     // hide loading state and show contents
     loadingDiv.style.display = 'none';
     contentDiv.style.display = 'block';
-  } catch {
+  } catch (error) {
+    console.log(error);
     window.alert('Something went wrong. Please try again.');
   }
 }
