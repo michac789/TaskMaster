@@ -8,7 +8,7 @@ const PROFILE_ENDPOINT = `${ROOT_ENDPOINT}/me`;
 const TASKS_ENDPOINT = `${ROOT_ENDPOINT}/tasks`;
 
 document.addEventListener('DOMContentLoaded', () => {
-  const INITIAL_PAGE = 'gantt';
+  const INITIAL_PAGE = 'kanban';
   handlePageChange(INITIAL_PAGE);
 });
 
