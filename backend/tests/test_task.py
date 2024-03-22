@@ -91,6 +91,90 @@ class TaskGetAllTestCase(SampleDataMixin, unittest.TestCase):
         self.assertEqual(response.json['In Progress'][0]['id'], 4)
         self.assertEqual(response.json['In Progress'][1]['id'], 1)
         
+    def test_task_get_all_success_filter_1(self):
+        response = self.client.get(
+            '/tasks?filter=To_Do,In_Progress',
+            headers={'Authorization': self.token1},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json), 3)
+        self.assertEqual(response.json[2]['id'], 1)
+        self.assertEqual(response.json[1]['id'], 3)
+        self.assertEqual(response.json[0]['id'], 4)
+        
+    def test_task_get_all_success_filter_2(self):
+        response = self.client.get(
+            '/tasks?filter=Completed',
+            headers={'Authorization': self.token2},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json), 0)
+        
+    def test_task_get_all_success_sort_1(self):
+        response = self.client.get(
+            '/tasks?sort=title',
+            headers={'Authorization': self.token1},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json), 4)
+        self.assertEqual(response.json[0]['id'], 1)
+        self.assertEqual(response.json[1]['id'], 2)
+        self.assertEqual(response.json[2]['id'], 3)
+        self.assertEqual(response.json[3]['id'], 4)
+        
+    def test_task_get_all_success_sort_2(self):
+        response = self.client.get(
+            '/tasks?sort=due_date',
+            headers={'Authorization': self.token1},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json), 4)
+        self.assertEqual(response.json[0]['id'], 1)
+        self.assertEqual(response.json[1]['id'], 4)
+        self.assertEqual(response.json[2]['id'], 2)
+        self.assertEqual(response.json[3]['id'], 3)
+        
+    def test_task_get_all_success_sort_3(self):
+        response = self.client.get(
+            '/tasks?sort=-due_date',
+            headers={'Authorization': self.token1},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json), 4)
+        self.assertEqual(response.json[0]['id'], 3)
+        self.assertEqual(response.json[1]['id'], 2)
+        self.assertEqual(response.json[2]['id'], 4)
+        self.assertEqual(response.json[3]['id'], 1)
+        
+    def test_task_get_all_success_filter_sort_1(self):
+        response = self.client.get(
+            '/tasks?filter=To_Do,In_Progress&sort=-title',
+            headers={'Authorization': self.token1},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json), 3)
+        self.assertEqual(response.json[0]['id'], 4)
+        self.assertEqual(response.json[1]['id'], 3)
+        self.assertEqual(response.json[2]['id'], 1)
+        
+    def test_task_get_all_success_filter_sort_2(self):
+        response = self.client.get(
+            '/tasks?filter=To_Do,Completed&sort=due_date',
+            headers={'Authorization': self.token1},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json), 2)
+        self.assertEqual(response.json[0]['id'], 2)
+        self.assertEqual(response.json[1]['id'], 3)
+        
+    def test_task_get_all_success_filter_sort_3(self):
+        response = self.client.get(
+            '/tasks?filter=In_Progress&sort=-due_date',
+            headers={'Authorization': self.token2},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json), 0)
+        
     def test_task_get_all_failure_1(self):
         # invalid token
         response = self.client.get(
