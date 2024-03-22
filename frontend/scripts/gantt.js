@@ -42,21 +42,45 @@ const createGanttChart = async (reset=false) => {
     const tasks = await response.json();
     // console.log(tasks)
 
+    // width and number of days in timeline depends on window width
+    const timelineWidth = window.innerWidth - 350;
+    const numDays = Math.floor(timelineWidth / 16);
+    console.log(numDays);
+
+    // populate tasks in gantt chart
+    const tableContainer = document.getElementById('gantt-content');
+    tableContainer.innerHTML = '';
+    tasks.forEach(task => {
+      const taskDiv = document.createElement('div');
+      taskDiv.classList.add('gantt-row');
+      taskDiv.innerHTML = `
+        <div class="typography-button gantt-row-title">
+          ${task.title}
+        </div>
+      `;
+
+      const timelineDiv = document.createElement('div');
+      timelineDiv.classList.add('gantt-row-timeline');
+      timelineDiv.style.width = `${timelineWidth}px`;
+      
+      // timeline tiles for each day
+      for (let i = 0; i < numDays; i++) {
+        const dayDiv = document.createElement('div');
+        if (i === 1) {
+          dayDiv.classList.add('gantt-tile-active');
+        } else {
+          dayDiv.classList.add('gantt-tile');
+        }
+        timelineDiv.appendChild(dayDiv);
+      }
+
+      taskDiv.appendChild(timelineDiv);
+      tableContainer.appendChild(taskDiv);
+    })
+
     // hide loading state and show contents
     loadingDiv.style.display = 'none';
     contentDiv.style.display = 'block';
-
-    const newDiv = document.createElement('div');
-    tasks.forEach(task => {
-      const taskDiv = document.createElement('div');
-      taskDiv.innerHTML = task.id + ' ' + task.title + ' ' + task.order + ' ' + task.status;
-      newDiv.appendChild(taskDiv);
-    })
-    contentDiv.innerHTML = '';
-    contentDiv.appendChild(newDiv);
-
-    // TODO - continue here!
-
   } catch {
     window.alert('Something went wrong. Please try again.');
   }

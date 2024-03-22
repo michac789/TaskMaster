@@ -32,7 +32,6 @@
     flex-direction: row;
     align-items: center;
     gap: 16px;
-    margin-bottom: 8px;
 
     @media (max-width: 768px) {
         gap: 8px;
@@ -46,4 +45,48 @@
 
 .gantt-content {
     display: none;
+    width: 100%;
+    padding: 16px;
+}
+
+.gantt-row {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    align-items: center;
+    height: 28px;
+    padding: 0 16px;
+    border: 1px solid #e0e0e0;
+}
+
+.gantt-row-title {
+    width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.gantt-row-timeline {
+    display: flex;
+    flex-direction: row;
+    height: 16px;
+}
+
+.gantt-tile {
+    width: 16px;
+    height: 16px;
+    border: 1px solid #eef1f0;
+    box-sizing: border-box;
+    background-color: #fafcfd;
+}
+.gantt-tile:hover {
+    background-color: pink;
+}
+
+.gantt-tile-active {
+    width: 16px;
+    height: 16px;
+    border: 1px solid #eef1f0;
+    box-sizing: border-box;
+    background-color: #58d559;
 }
