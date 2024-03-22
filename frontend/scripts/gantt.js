@@ -1,18 +1,24 @@
 
-const createGanttChart = async () => {
-  console.log('TODO - Gantt Chart')
-
+const createGanttChart = async (reset=false) => {
   // show loading state and hide contents
-  const loadingDiv = document.getElementById('gantt-loading')
-  const contentDiv = document.getElementById('gantt-content')
-  loadingDiv.style.display = 'block'
-  contentDiv.style.display = 'none'
+  const loadingDiv = document.getElementById('gantt-loading');
+  const contentDiv = document.getElementById('gantt-content');
+  loadingDiv.style.display = 'block';
+  contentDiv.style.display = 'none';
+
+  // if reset is true, back to default state
+  if (reset) {
+    document.getElementById('gantt-todo').checked = true;
+    document.getElementById('gantt-progress').checked = true;
+    document.getElementById('gantt-completed').checked = false;
+    document.getElementById('gantt-sort').value = '-due_date';
+  }
 
   // get all input elements (for filter & sort), set query parameters
-  const checkboxTodo = document.getElementById('gantt-todo')
-  const checkboxProgress = document.getElementById('gantt-progress')
-  const checkboxCompleted = document.getElementById('gantt-completed')
-  const selectSort = document.getElementById('gantt-sort')
+  const checkboxTodo = document.getElementById('gantt-todo');
+  const checkboxProgress = document.getElementById('gantt-progress');
+  const checkboxCompleted = document.getElementById('gantt-completed');
+  const selectSort = document.getElementById('gantt-sort');
   
   const filteredStatus = [];
   if (checkboxTodo.checked) filteredStatus.push(checkboxTodo.value);
@@ -33,23 +39,25 @@ const createGanttChart = async () => {
         'Authorization': localStorage.getItem('jwtToken')
       }
     });
-    const tasks = await response.json()
+    const tasks = await response.json();
     // console.log(tasks)
 
     // hide loading state and show contents
-    loadingDiv.style.display = 'none'
-    contentDiv.style.display = 'block'
+    loadingDiv.style.display = 'none';
+    contentDiv.style.display = 'block';
 
-    const newDiv = document.createElement('div')
+    const newDiv = document.createElement('div');
     tasks.forEach(task => {
-      const taskDiv = document.createElement('div')
-      taskDiv.innerHTML = task.id + ' ' + task.title + ' ' + task.order + ' ' + task.status
-      newDiv.appendChild(taskDiv)
+      const taskDiv = document.createElement('div');
+      taskDiv.innerHTML = task.id + ' ' + task.title + ' ' + task.order + ' ' + task.status;
+      newDiv.appendChild(taskDiv);
     })
-    contentDiv.innerHTML = ''
-    contentDiv.appendChild(newDiv)
+    contentDiv.innerHTML = '';
+    contentDiv.appendChild(newDiv);
+
+    // TODO - continue here!
 
   } catch {
-    window.alert('Something went wrong. Please try again.')
+    window.alert('Something went wrong. Please try again.');
   }
 }
