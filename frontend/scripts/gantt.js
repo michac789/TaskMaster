@@ -1,5 +1,13 @@
 
+let resizeTimeout;
+function ganttWindowResize() {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(createGanttChart, 250);
+}
+
 const createGanttChart = async (reset=false) => {
+  window.addEventListener('resize', ganttWindowResize);
+
   // show loading state and hide contents
   const loadingDiv = document.getElementById('gantt-loading');
   const contentDiv = document.getElementById('gantt-content');

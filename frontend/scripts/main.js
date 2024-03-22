@@ -27,8 +27,10 @@ const handlePageChange = async (pageName) => {
   kanbanPage.style.display = 'none';
   ganttPage.style.display = 'none';
 
+  // some cleanup before navigating to a new page
   const mainContainer = document.getElementById('main-container');
   mainContainer.style.overflowY = 'auto';
+  window.removeEventListener('resize', ganttWindowResize);
 
   switch (pageName) {
     case 'tasks':
