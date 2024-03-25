@@ -76,7 +76,7 @@ const closeProfileModal = () => {
   profileModal.style.visibility = 'hidden';
 }
 
-const handleLogin = async () => {
+const handleLogin = async (targetPage) => {
   try {
     // get the input values (username and password)
     const username = document.getElementById('login-username').value;
@@ -96,7 +96,7 @@ const handleLogin = async () => {
     // if successful, save the token to local storage and redirect to tasks page
     if (response.status === 200) {
       localStorage.setItem('jwtToken', responseData.token);
-      handlePageChange('tasks');  // TODO - redirect depending on the page the user was on before logging in
+      handlePageChange(targetPage);
     } else {
 
       // if unsuccessful, display the error message
@@ -109,7 +109,7 @@ const handleLogin = async () => {
   }
 }
 
-const handleRegister = async () => {
+const handleRegister = async (targetPage) => {
   try {
     // get the input values (username, email, and password)
     const username = document.getElementById('register-username').value;
@@ -136,7 +136,7 @@ const handleRegister = async () => {
 
     // if successful, redirect to login page, else display the error message
     if (response.status === 201) {
-      handlePageChange('login');
+      handlePageChange('login', targetPage);
       window.alert('Registration successful. Please log in.');
     } else {
       const error = await responseData['error']
