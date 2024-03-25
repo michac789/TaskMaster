@@ -1,5 +1,7 @@
 
 class TaskAPI {
+  static ERROR_MESSAGE = 'Connection error. Please check your internet connection or try again later.';
+
   static async getTasks() {
     try {
       const response = await fetch(`${TASKS_ENDPOINT}?format=per_status`, {
@@ -11,11 +13,11 @@ class TaskAPI {
       const data = await response.json();
       return {data, responseStatus: response.status};
     } catch {
-      window.alert('Something went wrong. Please try again later.');
+      window.alert(this.ERROR_MESSAGE);
     }
   }
 
-  static async editTask(taskId, title, description, dueDate) {
+  static async editTask(taskId, title, description, dueDate, status) {
     try {
       const response = await fetch(`${TASKS_ENDPOINT}/${taskId}`, {
         method: 'PUT',
@@ -26,13 +28,14 @@ class TaskAPI {
         body: JSON.stringify({
           title,
           description,
-          due_date: dueDate
+          due_date: dueDate,
+          status: status,
         })
       });
       const data = await response.json();
       return {data, responseStatus: response.status};
     } catch {
-      window.alert('Something went wrong. Please try again later.');
+      window.alert(this.ERROR_MESSAGE);
     }
   }
 
@@ -46,7 +49,7 @@ class TaskAPI {
       });
       return {data: {}, responseStatus: response.status};
     } catch {
-      window.alert('Something went wrong. Please try again later.');
+      window.alert(this.ERROR_MESSAGE);
     }
   }
 
@@ -68,7 +71,7 @@ class TaskAPI {
       const data = await response.json();
       return {data, responseStatus: response.status};
     } catch {
-      window.alert('Something went wrong. Please try again later.');
+      window.alert(this.ERROR_MESSAGE);
     }
   }
 
@@ -84,7 +87,7 @@ class TaskAPI {
       });
       return {data: {}, responseStatus: response.status};
     } catch {
-      window.alert('Something went wrong. Please try again later.');
+      window.alert(this.ERROR_MESSAGE);
     }
   }
 }

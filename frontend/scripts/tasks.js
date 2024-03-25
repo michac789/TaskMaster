@@ -193,48 +193,33 @@ const createTask = async () => {
   const description = document.getElementById('input-description').value;
   const date = document.getElementById('input-duedate').value;
   const status = document.getElementById('input-status').value;
-  const data = { title, description, due_date: date, status };
+  const requestBody = { title, description, due_date: date, status };
 
-  try {
-    // call api to create a new task with the given data
-    response = await fetch(TASKS_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': localStorage.getItem('jwtToken')
-      },
-      body: JSON.stringify(data)
-    });
-    const responseData = await response.json();
+  const { data, responseStatus } = await TaskAPI.createTask(...Object.values(requestBody));
 
-    // display error message if unsuccessful
-    if (response.status !== 201) {
-      const errorDiv = document.getElementById('task-editable-error');
-      errorDiv.innerText = `Error: ${responseData['error']}`
-      return;
-    }
+  // display error message if unsuccessful
+  if (responseStatus !== 201) {
+    const errorDiv = document.getElementById('task-editable-error');
+    errorDiv.innerText = `Error: ${data['error']}`
+    return;
+  }
     
-    // append the new task card (at the top, below the 'Add Task' button)
-    data['id'] = responseData['id'];
-    const taskcardsContainer = document.getElementById('taskcards-container');
-    const taskcardContainer = createReadableTaskCard(data);
-    if (taskcardsContainer.children.length > 1) {
-      const firstChild = taskcardsContainer.children[1];
-      taskcardsContainer.insertBefore(taskcardContainer, firstChild.nextSibling);
-    } else {
-      taskcardsContainer.appendChild(taskcardContainer);
-    }
-    cancelCreateTask();
-
-    // remove empty state (if present)
-    const emptyState = document.getElementById('task-empty');
-    emptyState.style.visibility = 'hidden';
-
-    window.alert('Task created successfully.');
+  // append the new task card (at the top, below the 'Add Task' button)
+  requestBody['id'] = data['id'];
+  const taskcardsContainer = document.getElementById('taskcards-container');
+  const taskcardContainer = createReadableTaskCard(requestBody);
+  if (taskcardsContainer.children.length > 1) {
+    const firstChild = taskcardsContainer.children[1];
+    taskcardsContainer.insertBefore(taskcardContainer, firstChild.nextSibling);
+  } else {
+    taskcardsContainer.appendChild(taskcardContainer);
   }
-  catch (error) {
-    window.alert('Something went wrong. Please try again.');
-  }
+  cancelCreateTask();
+
+  // remove empty state (if present)
+  const emptyState = document.getElementById('task-empty');
+  emptyState.style.visibility = 'hidden';
+  window.alert('Task created successfully.');
 }
 
 const confirmDeleteTask = (id, title) => {
@@ -267,33 +252,23 @@ const cancelDeleteTask = () => {
 }
 
 const deleteTask = async (id) => {
-  try {
-    // call api to delete task with the given id
-    await fetch(`${TASKS_ENDPOINT}/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': localStorage.getItem('jwtToken')
-      }
-    });
+  // call api to delete the task with the given id
+  await TaskAPI.deleteTask(id);
 
-    // remove the task card from the task cards container
-    const taskcardContainer = document.getElementById(`taskcard-${id}`);
-    taskcardContainer.remove();
+  // remove the task card from the task cards container
+  const taskcardContainer = document.getElementById(`taskcard-${id}`);
+  taskcardContainer.remove();
 
-    // if no task card left, show empty state
-    const taskcardsContainer = document.getElementById('taskcards-container');
-    if (taskcardsContainer.children.length === 1) {
-      const emptyState = document.getElementById('task-empty');
-      emptyState.style.visibility = 'visible';
-    }
-
-    // close delete confirmation modal
-    cancelDeleteTask();
-    window.alert('Task deleted successfully.');
+  // if no task card left, show empty state
+  const taskcardsContainer = document.getElementById('taskcards-container');
+  if (taskcardsContainer.children.length === 1) {
+    const emptyState = document.getElementById('task-empty');
+    emptyState.style.visibility = 'visible';
   }
-  catch (error) {
-    window.alert('Something went wrong. Please try again.');
-  }
+
+  // close delete confirmation modal
+  cancelDeleteTask();
+  window.alert('Task deleted successfully.');
 }
 
 const editTaskCard = (id, title, description, date, status) => {
@@ -347,36 +322,23 @@ const updateTask = async (id) => {
   const description = document.getElementById('input-description').value;
   const date = document.getElementById('input-duedate').value;
   const status = document.getElementById('input-status').value;
-  const data = { title, description, due_date: date, status };
 
-  try {
-    // call api to update the task with the given data
-    const response = await fetch(`${TASKS_ENDPOINT}/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': localStorage.getItem('jwtToken')
-      },
-      body: JSON.stringify(data)
-    });
-    const responseData = await response.json();
+  // call api to update the task with the given data
+  const requestBody = { id, title, description, due_date: date, status };
+  const { data, responseStatus } = await TaskAPI.editTask(...Object.values(requestBody));
 
-    // display error message if unsuccessful
-    if (response.status !== 200) {
-      const errorDiv = document.getElementById('task-editable-error');
-      errorDiv.innerText = `Error: ${responseData['error']}`
-      return;
-    }
-
-    // replace the editable task card with the read mode task card
-    const taskcardContainer = document.getElementById(`taskcard-edit-${id}`);
-    const taskcard = createReadableTaskCard({ id, title, description, due_date: date, status });
-    taskcardContainer.replaceWith(taskcard);
-    window.alert('Task updated successfully.');
+  // display error message if unsuccessful
+  if (responseStatus !== 200) {
+    const errorDiv = document.getElementById('task-editable-error');
+    errorDiv.innerText = `Error: ${data['error']}`
+    return;
   }
-  catch (error) {
-    window.alert('Something went wrong. Please try again.');
-  }
+
+  // replace the editable task card with the read mode task card
+  const taskcardContainer = document.getElementById(`taskcard-edit-${id}`);
+  const taskcard = createReadableTaskCard({ id, title, description, due_date: date, status });
+  taskcardContainer.replaceWith(taskcard);
+  window.alert('Task updated successfully.');
 }
 
 const openUnsavedChangesModal = (fn) => {
