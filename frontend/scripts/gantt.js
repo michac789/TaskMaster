@@ -5,7 +5,7 @@ function ganttWindowResize() {
     resizeTimeout = setTimeout(createGanttChart, 250);
 }
 
-const createGanttChart = async (reset=false) => {
+const createGanttChart = async (reset=false, addDays=0) => {
   window.addEventListener('resize', ganttWindowResize);
 
   // show loading state and hide contents
@@ -15,12 +15,18 @@ const createGanttChart = async (reset=false) => {
   contentDiv.style.display = 'none';
 
   // if reset is true, back to default state
+  const prevDaysState = document.getElementById('gantt-prevdays-state');
   if (reset) {
     document.getElementById('gantt-todo').checked = true;
     document.getElementById('gantt-progress').checked = true;
     document.getElementById('gantt-completed').checked = false;
     document.getElementById('gantt-sort').value = 'due_date';
+    prevDaysState.innerHTML = '-7';
   }
+
+  // update previous days state
+  const prevDays = parseInt(prevDaysState.innerHTML) + addDays;
+  prevDaysState.innerHTML = prevDays;
 
   // get all input elements (for filter & sort), set query parameters
   const checkboxTodo = document.getElementById('gantt-todo');
@@ -73,7 +79,7 @@ const createGanttChart = async (reset=false) => {
 
     const numDates = Math.floor(numDays / 7) + 1;
     const startDate = new Date(today);
-    startDate.setDate(today.getDate() - 7);
+    startDate.setDate(today.getDate() + prevDays);
     
     for (let i = 0; i < numDates; i++) {
       const dateDiv = document.createElement('div');
@@ -97,7 +103,7 @@ const createGanttChart = async (reset=false) => {
       `;
       
       const currDate = new Date(today);
-      currDate.setDate(today.getDate() - 7);
+      currDate.setDate(today.getDate() + prevDays);
       const taskDueDate = new Date(task.due_date);
       const timelineDiv = document.createElement('div');
       timelineDiv.classList.add('gantt-row-timeline');
