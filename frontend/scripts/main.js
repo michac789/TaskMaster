@@ -7,12 +7,13 @@ const REGISTER_ENDPOINT = `${ROOT_ENDPOINT}/users`;
 const PROFILE_ENDPOINT = `${ROOT_ENDPOINT}/me`;
 const TASKS_ENDPOINT = `${ROOT_ENDPOINT}/tasks`;
 
+const INITIAL_PAGE = 'kanban';
+
 document.addEventListener('DOMContentLoaded', () => {
-  const INITIAL_PAGE = 'kanban';
   handlePageChange(INITIAL_PAGE);
 });
 
-const handlePageChange = async (pageName) => {
+const handlePageChange = async (pageName, ...args) => {
   const tasksPage = document.getElementById('page-tasks');
   const loginPage = document.getElementById('page-login');
   const registerPage = document.getElementById('page-register');
@@ -35,13 +36,13 @@ const handlePageChange = async (pageName) => {
   switch (pageName) {
     case 'tasks':
       setActiveMenu('tasks');
-      loginRequired(() => navigateTasksPage(tasksPage));
+      loginRequired(() => navigateTasksPage(tasksPage), 'tasks');
       break;
     case 'login':
-      navigateLoginPage(loginPage);
+      navigateLoginPage(loginPage, args[0] || INITIAL_PAGE);
       break;
     case 'register':
-      navigateRegisterPage(registerPage);
+      navigateRegisterPage(registerPage, args[0] || INITIAL_PAGE);
       break;
     case 'about':
       setActiveMenu('about');
@@ -49,11 +50,11 @@ const handlePageChange = async (pageName) => {
       break;
     case 'kanban':
       setActiveMenu('kanban');
-      loginRequired(() => navigateKanbanPage(kanbanPage));
+      loginRequired(() => navigateKanbanPage(kanbanPage), 'kanban');
       break;
     case 'gantt':
       setActiveMenu('gantt');
-      loginRequired(() => navigateGanttPage(ganttPage));
+      loginRequired(() => navigateGanttPage(ganttPage), 'gantt');
       break;
   }
 }
@@ -91,14 +92,15 @@ const setActiveMenu = (menu) => {
  * Wrapper function to check if user is logged in
  * If not, redirect to login page
  * If yes, call the given function fn
- * @param {function} fn (callback function)  
+ * @param {function} fn (callback function) 
+ * @param {string} pageName (optional, the page to redirect after login)
  }} fn 
  */
-const loginRequired = async (fn) => {
+const loginRequired = async (fn, pageName=INITIAL_PAGE) => {
   const token = localStorage.getItem('jwtToken');
   if (!token) {
     // if no token, redirect to login page
-    handlePageChange('login');
+    handlePageChange('login', pageName);
   } else {
     const profile = await getProfile();
     if (profile) {
@@ -109,7 +111,7 @@ const loginRequired = async (fn) => {
       fn();
     } else {
       // if token is invalid / expired, redirect to login page
-      handlePageChange('login');
+      handlePageChange('login', pageName);
     }
   }
 }
@@ -126,7 +128,7 @@ const navigateTasksPage = (page) => {
   }
 }
 
-const navigateLoginPage = (page) => {
+const navigateLoginPage = (page, targetPage) => {
   // change username in navbar to 'Not Logged In'
   const usernameDiv = document.getElementById('navbar-username');
   usernameDiv.classList.add('text-gray');
@@ -148,15 +150,15 @@ const navigateLoginPage = (page) => {
     if (event.key === 'Enter') {
       const registerLink = document.getElementById('register-link');
       if (document.activeElement === registerLink) {
-        handlePageChange('register');
+        handlePageChange('register', pageName);
       } else {
-        handleLogin();
+        handleLogin(targetPage);
       }
     }
   });
 }
 
-const navigateRegisterPage = (page) => {
+const navigateRegisterPage = (page, targetPage) => {
   page.style.display = 'block';
 
   // auto-focus on the username input field
@@ -172,9 +174,9 @@ const navigateRegisterPage = (page) => {
     if (event.key === 'Enter') {
       const loginLink = document.getElementById('login-link');
       if (document.activeElement === loginLink) {
-        handlePageChange('login');
+        handlePageChange('login', targetPage);
       } else {
-        handleRegister();
+        handleRegister(targetPage);
       }
     }
   });

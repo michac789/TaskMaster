@@ -89,3 +89,7 @@
     border: 1px solid #eef1f0;
     box-sizing: border-box;
 }
+
+.gantt-prevdays-state {
+    display: none;
+}
