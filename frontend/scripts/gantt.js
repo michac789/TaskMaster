@@ -84,7 +84,7 @@ const createGanttChart = async (reset=false, addDays=0) => {
     for (let i = 0; i < numDates; i++) {
       const dateDiv = document.createElement('div');
       dateDiv.classList.add('typography-overline');
-      dateDiv.style.position = 'absolute';
+      dateDiv.style.position = 'relative';
       dateDiv.style.left = `${320 + i * 16 * 7}px`;
       dateDiv.innerHTML = formatDate(startDate);
       dateContainer.appendChild(dateDiv);
