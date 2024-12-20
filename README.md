@@ -12,7 +12,7 @@
 
 You're tasked with building a task management web application called 'TaskMaster'. The application should allow users to create, view, update, and delete tasks. Each task should have a title, description, due date, and status (e.g., "to do", "in progress", "completed").
 
-The frontend should be built using HTML, CSS, and JavaScript. The backend should be built using Python with Flask. For data storage, you may use SQLite database.
+The frontend should be built using HTML, CSS, and JavaScript. As a challenge, the usage of frontend frameworks or libraries is prohibited to test your creativity and thinking process. The backend should be built using Python with Flask. For data storage, you may use SQLite database.
 
 ### Frontend
 
@@ -56,6 +56,12 @@ Design a SQLite database schema to store tasks.
 
 - [x] Deploy the application to a hosting platform
 - [x] Make sure the application is accessible online and functions correctly in a production environment
+
+### Follow-Up (Optional)
+
+For additional evaluation to distinguish submission of similar levels:
+- [x] Kanban Board feature with drag and drop options for the tasks
+- [x] Gantt chart feature to see timeline of current tasks and feature tasks (assume that start date is a week before due date)
 
 ## Project Overview
 
