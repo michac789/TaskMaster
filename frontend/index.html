@@ -148,15 +148,29 @@
             onclick="createGanttChart(reset=true)">
           Reset
         </button>
+        <button class="typography-subtitle button-outline-neutral button-sm"
+            onclick="createGanttChart(reset=false, -7)">
+          <i class="ri-arrow-left-s-line"></i>
+        </button>
+        <button class="typography-subtitle button-outline-neutral button-sm"
+            onclick="createGanttChart(reset=false, 7)">
+          <i class="ri-arrow-right-s-line"></i>
+        </button>
+      </div>
+
+      <div class="gantt-prevdays-state" id="gantt-prevdays-state">-7</div>
+
+      <div class="typography-overline" style="margin-top: 4px;">
+        *It is assumed that the start date of all tasks are 7 days before the due date.
       </div>
 
       <div class="gantt-loading" id="gantt-loading">
-        Loading state...
+        <div class="typography-overline" style="margin: 16px;">
+          Loading data...
+        </div>
       </div>
 
-      <div class="gantt-content" id="gantt-content">
-        TODO - Gantt Chart
-      </div>
+      <div class="gantt-content" id="gantt-content"></div>
     </div>
 
     <div class="layout-login-container" id="page-login">
